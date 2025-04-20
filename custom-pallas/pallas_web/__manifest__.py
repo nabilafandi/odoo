@@ -16,7 +16,7 @@
         'views/web_location.xml',
         'views/web_promo.xml',
         'views/product_public_category.xml',
-        # 'data/pallas_web_admin_menus.xml',
-        # 'data/records.xml',
+        'data/pallas_web_admin_menus.xml',
+        'data/records.xml',
     ],
 }
