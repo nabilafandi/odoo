@@ -8550,3 +8550,1154 @@ FileNotFoundError: [WinError 3] The system cannot find the path specified: 'c:\\
   File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 466, in model_create_single
     warnings.warn(
  
+2025-04-15 13:27:35,333 1372 WARNING pallas py.warnings: C:\Users\nabil\Documents\Github\odoo18\odoo\api.py:466: DeprecationWarning: The model odoo.addons.pallas_web.models.web_about_us is not overriding the create method in batch
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1030, in _bootstrap
+    self._bootstrap_inner()
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 692, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 761, in __init__
+    self.handle()
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\werkzeug\serving.py", line 390, in handle
+    super().handle()
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\http\server.py", line 436, in handle
+    self.handle_one_request()
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\http\server.py", line 424, in handle_one_request
+    method()
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\werkzeug\serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\werkzeug\serving.py", line 323, in execute
+    application_iter = app(environ, start_response)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2363, in __call__
+    response = request._serve_db()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1869, in _serve_db
+    self.registry, cr_readonly = self._open_registry()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1485, in _open_registry
+    registry = Registry(self.db)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\registry.py", line 106, in __new__
+    return cls.new(db_name)
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\decorator.py", line 232, in fun
+    return caller(func, *(extras + args), **kw)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\tools\func.py", line 97, in locked
+    return func(inst, *args, **kwargs)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\registry.py", line 131, in new
+    odoo.modules.load_modules(registry, force_demo, status, update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 475, in load_modules
+    processed_modules += load_marked_modules(env, graph,
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 363, in load_marked_modules
+    loaded, processed = load_module_graph(
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 184, in load_module_graph
+    load_openerp_module(package.name)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\module.py", line 384, in load_openerp_module
+    __import__(qualname)
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\__init__.py", line 2, in <module>
+    from . import models
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\__init__.py", line 1, in <module>
+    from . import web_about_us
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 3, in <module>
+    class WebAboutUs(models.Model):
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 13, in WebAboutUs
+    @api.model
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 429, in model
+    return model_create_single(method)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 466, in model_create_single
+    warnings.warn(
+ 
+2025-04-15 13:32:11,437 1372 ERROR ? odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2355, in __call__
+    request._post_init()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1449, in _post_init
+    self.session, self.db = self._get_session_and_dbname()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1466, in _get_session_and_dbname
+    host = self.httprequest.environ['HTTP_HOST']
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'HTTP_HOST'
+2025-04-15 13:32:14,629 1372 ERROR ? odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2355, in __call__
+    request._post_init()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1449, in _post_init
+    self.session, self.db = self._get_session_and_dbname()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1466, in _get_session_and_dbname
+    host = self.httprequest.environ['HTTP_HOST']
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'HTTP_HOST'
+2025-04-15 13:32:16,876 1372 ERROR ? odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2355, in __call__
+    request._post_init()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1449, in _post_init
+    self.session, self.db = self._get_session_and_dbname()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1466, in _get_session_and_dbname
+    host = self.httprequest.environ['HTTP_HOST']
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'HTTP_HOST'
+2025-04-15 13:32:51,615 1372 ERROR ? odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2355, in __call__
+    request._post_init()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1449, in _post_init
+    self.session, self.db = self._get_session_and_dbname()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1466, in _get_session_and_dbname
+    host = self.httprequest.environ['HTTP_HOST']
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'HTTP_HOST'
+2025-04-15 13:32:54,657 1372 ERROR ? odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2355, in __call__
+    request._post_init()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1449, in _post_init
+    self.session, self.db = self._get_session_and_dbname()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1466, in _get_session_and_dbname
+    host = self.httprequest.environ['HTTP_HOST']
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'HTTP_HOST'
+2025-04-15 13:37:27,748 11368 WARNING pallas py.warnings: C:\Users\nabil\Documents\Github\odoo18\odoo\api.py:466: DeprecationWarning: The model odoo.addons.pallas_web.models.web_about_us is not overriding the create method in batch
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1030, in _bootstrap
+    self._bootstrap_inner()
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 692, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 761, in __init__
+    self.handle()
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\werkzeug\serving.py", line 390, in handle
+    super().handle()
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\http\server.py", line 436, in handle
+    self.handle_one_request()
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\http\server.py", line 424, in handle_one_request
+    method()
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\werkzeug\serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\werkzeug\serving.py", line 323, in execute
+    application_iter = app(environ, start_response)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2363, in __call__
+    response = request._serve_db()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1869, in _serve_db
+    self.registry, cr_readonly = self._open_registry()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1485, in _open_registry
+    registry = Registry(self.db)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\registry.py", line 106, in __new__
+    return cls.new(db_name)
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\decorator.py", line 232, in fun
+    return caller(func, *(extras + args), **kw)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\tools\func.py", line 97, in locked
+    return func(inst, *args, **kwargs)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\registry.py", line 131, in new
+    odoo.modules.load_modules(registry, force_demo, status, update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 475, in load_modules
+    processed_modules += load_marked_modules(env, graph,
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 363, in load_marked_modules
+    loaded, processed = load_module_graph(
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 184, in load_module_graph
+    load_openerp_module(package.name)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\module.py", line 384, in load_openerp_module
+    __import__(qualname)
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\__init__.py", line 2, in <module>
+    from . import models
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\__init__.py", line 1, in <module>
+    from . import web_about_us
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 3, in <module>
+    class WebAboutUs(models.Model):
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 13, in WebAboutUs
+    @api.model
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 429, in model
+    return model_create_single(method)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 466, in model_create_single
+    warnings.warn(
+ 
+2025-04-15 13:37:41,359 11368 ERROR ? odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2355, in __call__
+    request._post_init()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1449, in _post_init
+    self.session, self.db = self._get_session_and_dbname()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1466, in _get_session_and_dbname
+    host = self.httprequest.environ['HTTP_HOST']
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'HTTP_HOST'
+2025-04-15 13:37:42,770 11368 ERROR ? odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2355, in __call__
+    request._post_init()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1449, in _post_init
+    self.session, self.db = self._get_session_and_dbname()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1466, in _get_session_and_dbname
+    host = self.httprequest.environ['HTTP_HOST']
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'HTTP_HOST'
+2025-04-15 13:37:43,377 11368 ERROR ? odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2355, in __call__
+    request._post_init()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1449, in _post_init
+    self.session, self.db = self._get_session_and_dbname()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1466, in _get_session_and_dbname
+    host = self.httprequest.environ['HTTP_HOST']
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'HTTP_HOST'
+2025-04-15 13:37:44,256 11368 ERROR ? odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2355, in __call__
+    request._post_init()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1449, in _post_init
+    self.session, self.db = self._get_session_and_dbname()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1466, in _get_session_and_dbname
+    host = self.httprequest.environ['HTTP_HOST']
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'HTTP_HOST'
+2025-04-15 13:38:09,458 14432 ERROR ? odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2355, in __call__
+    request._post_init()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1449, in _post_init
+    self.session, self.db = self._get_session_and_dbname()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1466, in _get_session_and_dbname
+    host = self.httprequest.environ['HTTP_HOST']
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'HTTP_HOST'
+2025-04-15 13:38:09,960 14432 ERROR ? odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2355, in __call__
+    request._post_init()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1449, in _post_init
+    self.session, self.db = self._get_session_and_dbname()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1466, in _get_session_and_dbname
+    host = self.httprequest.environ['HTTP_HOST']
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'HTTP_HOST'
+2025-04-15 13:38:10,778 14432 ERROR ? odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2355, in __call__
+    request._post_init()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1449, in _post_init
+    self.session, self.db = self._get_session_and_dbname()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1466, in _get_session_and_dbname
+    host = self.httprequest.environ['HTTP_HOST']
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'HTTP_HOST'
+2025-04-15 13:39:21,498 14432 WARNING pallas py.warnings: C:\Users\nabil\Documents\Github\odoo18\odoo\api.py:466: DeprecationWarning: The model odoo.addons.pallas_web.models.web_about_us is not overriding the create method in batch
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1030, in _bootstrap
+    self._bootstrap_inner()
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 692, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 761, in __init__
+    self.handle()
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\werkzeug\serving.py", line 390, in handle
+    super().handle()
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\http\server.py", line 436, in handle
+    self.handle_one_request()
+  File "C:\Users\nabil\AppData\Local\Programs\Python\Python312\Lib\http\server.py", line 424, in handle_one_request
+    method()
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\werkzeug\serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\werkzeug\serving.py", line 323, in execute
+    application_iter = app(environ, start_response)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2363, in __call__
+    response = request._serve_db()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1869, in _serve_db
+    self.registry, cr_readonly = self._open_registry()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1485, in _open_registry
+    registry = Registry(self.db)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\registry.py", line 106, in __new__
+    return cls.new(db_name)
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\decorator.py", line 232, in fun
+    return caller(func, *(extras + args), **kw)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\tools\func.py", line 97, in locked
+    return func(inst, *args, **kwargs)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\registry.py", line 131, in new
+    odoo.modules.load_modules(registry, force_demo, status, update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 475, in load_modules
+    processed_modules += load_marked_modules(env, graph,
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 363, in load_marked_modules
+    loaded, processed = load_module_graph(
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 184, in load_module_graph
+    load_openerp_module(package.name)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\module.py", line 384, in load_openerp_module
+    __import__(qualname)
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\__init__.py", line 2, in <module>
+    from . import models
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\__init__.py", line 1, in <module>
+    from . import web_about_us
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 3, in <module>
+    class WebAboutUs(models.Model):
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 13, in WebAboutUs
+    @api.model
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 429, in model
+    return model_create_single(method)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 466, in model_create_single
+    warnings.warn(
+ 
+2025-04-15 14:09:23,968 14432 ERROR ? odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2355, in __call__
+    request._post_init()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1449, in _post_init
+    self.session, self.db = self._get_session_and_dbname()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1466, in _get_session_and_dbname
+    host = self.httprequest.environ['HTTP_HOST']
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'HTTP_HOST'
+2025-04-15 14:10:17,958 2164 WARNING pallas py.warnings: C:\Users\nabil\Documents\Github\odoo18\odoo\api.py:466: DeprecationWarning: The model odoo.addons.pallas_web.models.web_about_us is not overriding the create method in batch
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo-bin", line 8, in <module>
+    odoo.cli.main()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\command.py", line 66, in main
+    o.run(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 180, in run
+    main(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 173, in main
+    rc = odoo.service.server.start(preload=preload, stop=stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1401, in start
+    rc = server.run(preload, stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 577, in run
+    rc = preload_registries(preload)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1305, in preload_registries
+    registry = Registry.new(dbname, update_module=update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\decorator.py", line 232, in fun
+    return caller(func, *(extras + args), **kw)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\tools\func.py", line 97, in locked
+    return func(inst, *args, **kwargs)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\registry.py", line 131, in new
+    odoo.modules.load_modules(registry, force_demo, status, update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 475, in load_modules
+    processed_modules += load_marked_modules(env, graph,
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 363, in load_marked_modules
+    loaded, processed = load_module_graph(
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 184, in load_module_graph
+    load_openerp_module(package.name)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\module.py", line 384, in load_openerp_module
+    __import__(qualname)
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\__init__.py", line 2, in <module>
+    from . import models
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\__init__.py", line 1, in <module>
+    from . import web_about_us
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 3, in <module>
+    class WebAboutUs(models.Model):
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 13, in WebAboutUs
+    @api.model
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 429, in model
+    return model_create_single(method)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 466, in model_create_single
+    warnings.warn(
+ 
+2025-04-15 14:10:24,094 2164 ERROR ? odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2355, in __call__
+    request._post_init()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1449, in _post_init
+    self.session, self.db = self._get_session_and_dbname()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1466, in _get_session_and_dbname
+    host = self.httprequest.environ['HTTP_HOST']
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'HTTP_HOST'
+2025-04-15 14:10:24,819 2164 ERROR ? odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2355, in __call__
+    request._post_init()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1449, in _post_init
+    self.session, self.db = self._get_session_and_dbname()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1466, in _get_session_and_dbname
+    host = self.httprequest.environ['HTTP_HOST']
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'HTTP_HOST'
+2025-04-15 14:10:25,391 2164 ERROR ? odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2355, in __call__
+    request._post_init()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1449, in _post_init
+    self.session, self.db = self._get_session_and_dbname()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1466, in _get_session_and_dbname
+    host = self.httprequest.environ['HTTP_HOST']
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'HTTP_HOST'
+2025-04-20 06:39:27,239 14088 WARNING pallas py.warnings: C:\Users\nabil\Documents\Github\odoo18\odoo\api.py:466: DeprecationWarning: The model odoo.addons.pallas_web.models.web_about_us is not overriding the create method in batch
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo-bin", line 8, in <module>
+    odoo.cli.main()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\command.py", line 66, in main
+    o.run(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 180, in run
+    main(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 173, in main
+    rc = odoo.service.server.start(preload=preload, stop=stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1401, in start
+    rc = server.run(preload, stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 577, in run
+    rc = preload_registries(preload)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1305, in preload_registries
+    registry = Registry.new(dbname, update_module=update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\decorator.py", line 232, in fun
+    return caller(func, *(extras + args), **kw)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\tools\func.py", line 97, in locked
+    return func(inst, *args, **kwargs)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\registry.py", line 131, in new
+    odoo.modules.load_modules(registry, force_demo, status, update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 475, in load_modules
+    processed_modules += load_marked_modules(env, graph,
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 363, in load_marked_modules
+    loaded, processed = load_module_graph(
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 184, in load_module_graph
+    load_openerp_module(package.name)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\module.py", line 384, in load_openerp_module
+    __import__(qualname)
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\__init__.py", line 2, in <module>
+    from . import models
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\__init__.py", line 1, in <module>
+    from . import web_about_us
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 3, in <module>
+    class WebAboutUs(models.Model):
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 13, in WebAboutUs
+    @api.model
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 429, in model
+    return model_create_single(method)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 466, in model_create_single
+    warnings.warn(
+ 
+2025-04-20 06:40:39,997 11108 WARNING pallas py.warnings: C:\Users\nabil\Documents\Github\odoo18\odoo\api.py:466: DeprecationWarning: The model odoo.addons.pallas_web.models.web_about_us is not overriding the create method in batch
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo-bin", line 8, in <module>
+    odoo.cli.main()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\command.py", line 66, in main
+    o.run(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 180, in run
+    main(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 173, in main
+    rc = odoo.service.server.start(preload=preload, stop=stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1401, in start
+    rc = server.run(preload, stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 577, in run
+    rc = preload_registries(preload)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1305, in preload_registries
+    registry = Registry.new(dbname, update_module=update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\decorator.py", line 232, in fun
+    return caller(func, *(extras + args), **kw)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\tools\func.py", line 97, in locked
+    return func(inst, *args, **kwargs)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\registry.py", line 131, in new
+    odoo.modules.load_modules(registry, force_demo, status, update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 475, in load_modules
+    processed_modules += load_marked_modules(env, graph,
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 363, in load_marked_modules
+    loaded, processed = load_module_graph(
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 184, in load_module_graph
+    load_openerp_module(package.name)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\module.py", line 384, in load_openerp_module
+    __import__(qualname)
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\__init__.py", line 2, in <module>
+    from . import models
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\__init__.py", line 1, in <module>
+    from . import web_about_us
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 3, in <module>
+    class WebAboutUs(models.Model):
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 13, in WebAboutUs
+    @api.model
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 429, in model
+    return model_create_single(method)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 466, in model_create_single
+    warnings.warn(
+ 
+2025-04-20 08:52:40,858 14400 WARNING pallas py.warnings: C:\Users\nabil\Documents\Github\odoo18\odoo\api.py:466: DeprecationWarning: The model odoo.addons.pallas_web.models.web_about_us is not overriding the create method in batch
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo-bin", line 8, in <module>
+    odoo.cli.main()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\command.py", line 66, in main
+    o.run(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 180, in run
+    main(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 173, in main
+    rc = odoo.service.server.start(preload=preload, stop=stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1401, in start
+    rc = server.run(preload, stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 577, in run
+    rc = preload_registries(preload)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1305, in preload_registries
+    registry = Registry.new(dbname, update_module=update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\decorator.py", line 232, in fun
+    return caller(func, *(extras + args), **kw)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\tools\func.py", line 97, in locked
+    return func(inst, *args, **kwargs)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\registry.py", line 131, in new
+    odoo.modules.load_modules(registry, force_demo, status, update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 475, in load_modules
+    processed_modules += load_marked_modules(env, graph,
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 363, in load_marked_modules
+    loaded, processed = load_module_graph(
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 184, in load_module_graph
+    load_openerp_module(package.name)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\module.py", line 384, in load_openerp_module
+    __import__(qualname)
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\__init__.py", line 2, in <module>
+    from . import models
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\__init__.py", line 1, in <module>
+    from . import web_about_us
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 3, in <module>
+    class WebAboutUs(models.Model):
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 13, in WebAboutUs
+    @api.model
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 429, in model
+    return model_create_single(method)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 466, in model_create_single
+    warnings.warn(
+ 
+2025-04-20 08:55:34,448 1960 WARNING pallas py.warnings: C:\Users\nabil\Documents\Github\odoo18\odoo\api.py:466: DeprecationWarning: The model odoo.addons.pallas_web.models.web_about_us is not overriding the create method in batch
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo-bin", line 8, in <module>
+    odoo.cli.main()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\command.py", line 66, in main
+    o.run(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 180, in run
+    main(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 173, in main
+    rc = odoo.service.server.start(preload=preload, stop=stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1401, in start
+    rc = server.run(preload, stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 577, in run
+    rc = preload_registries(preload)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1305, in preload_registries
+    registry = Registry.new(dbname, update_module=update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\decorator.py", line 232, in fun
+    return caller(func, *(extras + args), **kw)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\tools\func.py", line 97, in locked
+    return func(inst, *args, **kwargs)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\registry.py", line 131, in new
+    odoo.modules.load_modules(registry, force_demo, status, update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 475, in load_modules
+    processed_modules += load_marked_modules(env, graph,
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 363, in load_marked_modules
+    loaded, processed = load_module_graph(
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 184, in load_module_graph
+    load_openerp_module(package.name)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\module.py", line 384, in load_openerp_module
+    __import__(qualname)
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\__init__.py", line 2, in <module>
+    from . import models
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\__init__.py", line 1, in <module>
+    from . import web_about_us
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 3, in <module>
+    class WebAboutUs(models.Model):
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 13, in WebAboutUs
+    @api.model
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 429, in model
+    return model_create_single(method)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 466, in model_create_single
+    warnings.warn(
+ 
+2025-04-20 08:56:40,215 15528 WARNING pallas py.warnings: C:\Users\nabil\Documents\Github\odoo18\odoo\api.py:466: DeprecationWarning: The model odoo.addons.pallas_web.models.web_about_us is not overriding the create method in batch
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo-bin", line 8, in <module>
+    odoo.cli.main()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\command.py", line 66, in main
+    o.run(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 180, in run
+    main(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 173, in main
+    rc = odoo.service.server.start(preload=preload, stop=stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1401, in start
+    rc = server.run(preload, stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 577, in run
+    rc = preload_registries(preload)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1305, in preload_registries
+    registry = Registry.new(dbname, update_module=update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\decorator.py", line 232, in fun
+    return caller(func, *(extras + args), **kw)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\tools\func.py", line 97, in locked
+    return func(inst, *args, **kwargs)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\registry.py", line 131, in new
+    odoo.modules.load_modules(registry, force_demo, status, update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 475, in load_modules
+    processed_modules += load_marked_modules(env, graph,
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 363, in load_marked_modules
+    loaded, processed = load_module_graph(
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 184, in load_module_graph
+    load_openerp_module(package.name)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\module.py", line 384, in load_openerp_module
+    __import__(qualname)
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\__init__.py", line 2, in <module>
+    from . import models
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\__init__.py", line 1, in <module>
+    from . import web_about_us
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 3, in <module>
+    class WebAboutUs(models.Model):
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 13, in WebAboutUs
+    @api.model
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 429, in model
+    return model_create_single(method)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 466, in model_create_single
+    warnings.warn(
+ 
+2025-04-20 09:12:51,781 12280 WARNING pallas py.warnings: C:\Users\nabil\Documents\Github\odoo18\odoo\api.py:466: DeprecationWarning: The model odoo.addons.pallas_web.models.web_about_us is not overriding the create method in batch
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo-bin", line 8, in <module>
+    odoo.cli.main()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\command.py", line 66, in main
+    o.run(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 180, in run
+    main(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 173, in main
+    rc = odoo.service.server.start(preload=preload, stop=stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1401, in start
+    rc = server.run(preload, stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 577, in run
+    rc = preload_registries(preload)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1305, in preload_registries
+    registry = Registry.new(dbname, update_module=update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\decorator.py", line 232, in fun
+    return caller(func, *(extras + args), **kw)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\tools\func.py", line 97, in locked
+    return func(inst, *args, **kwargs)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\registry.py", line 131, in new
+    odoo.modules.load_modules(registry, force_demo, status, update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 475, in load_modules
+    processed_modules += load_marked_modules(env, graph,
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 363, in load_marked_modules
+    loaded, processed = load_module_graph(
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 184, in load_module_graph
+    load_openerp_module(package.name)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\module.py", line 384, in load_openerp_module
+    __import__(qualname)
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\__init__.py", line 2, in <module>
+    from . import models
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\__init__.py", line 1, in <module>
+    from . import web_about_us
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 3, in <module>
+    class WebAboutUs(models.Model):
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 13, in WebAboutUs
+    @api.model
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 429, in model
+    return model_create_single(method)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 466, in model_create_single
+    warnings.warn(
+ 
+2025-04-20 09:18:46,040 13240 WARNING pallas py.warnings: C:\Users\nabil\Documents\Github\odoo18\odoo\api.py:466: DeprecationWarning: The model odoo.addons.pallas_web.models.web_about_us is not overriding the create method in batch
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo-bin", line 8, in <module>
+    odoo.cli.main()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\command.py", line 66, in main
+    o.run(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 180, in run
+    main(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 173, in main
+    rc = odoo.service.server.start(preload=preload, stop=stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1401, in start
+    rc = server.run(preload, stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 577, in run
+    rc = preload_registries(preload)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1305, in preload_registries
+    registry = Registry.new(dbname, update_module=update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\decorator.py", line 232, in fun
+    return caller(func, *(extras + args), **kw)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\tools\func.py", line 97, in locked
+    return func(inst, *args, **kwargs)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\registry.py", line 131, in new
+    odoo.modules.load_modules(registry, force_demo, status, update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 475, in load_modules
+    processed_modules += load_marked_modules(env, graph,
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 363, in load_marked_modules
+    loaded, processed = load_module_graph(
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 184, in load_module_graph
+    load_openerp_module(package.name)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\module.py", line 384, in load_openerp_module
+    __import__(qualname)
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\__init__.py", line 2, in <module>
+    from . import models
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\__init__.py", line 1, in <module>
+    from . import web_about_us
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 3, in <module>
+    class WebAboutUs(models.Model):
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 13, in WebAboutUs
+    @api.model
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 429, in model
+    return model_create_single(method)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 466, in model_create_single
+    warnings.warn(
+ 
+2025-04-20 09:43:00,211 11736 WARNING pallas py.warnings: C:\Users\nabil\Documents\Github\odoo18\odoo\api.py:466: DeprecationWarning: The model odoo.addons.pallas_web.models.web_about_us is not overriding the create method in batch
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo-bin", line 8, in <module>
+    odoo.cli.main()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\command.py", line 66, in main
+    o.run(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 180, in run
+    main(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 173, in main
+    rc = odoo.service.server.start(preload=preload, stop=stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1401, in start
+    rc = server.run(preload, stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 577, in run
+    rc = preload_registries(preload)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1305, in preload_registries
+    registry = Registry.new(dbname, update_module=update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\decorator.py", line 232, in fun
+    return caller(func, *(extras + args), **kw)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\tools\func.py", line 97, in locked
+    return func(inst, *args, **kwargs)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\registry.py", line 131, in new
+    odoo.modules.load_modules(registry, force_demo, status, update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 475, in load_modules
+    processed_modules += load_marked_modules(env, graph,
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 363, in load_marked_modules
+    loaded, processed = load_module_graph(
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 184, in load_module_graph
+    load_openerp_module(package.name)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\module.py", line 384, in load_openerp_module
+    __import__(qualname)
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\__init__.py", line 2, in <module>
+    from . import models
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\__init__.py", line 1, in <module>
+    from . import web_about_us
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 3, in <module>
+    class WebAboutUs(models.Model):
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 13, in WebAboutUs
+    @api.model
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 429, in model
+    return model_create_single(method)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 466, in model_create_single
+    warnings.warn(
+ 
+2025-04-20 09:45:13,077 12136 WARNING pallas py.warnings: C:\Users\nabil\Documents\Github\odoo18\odoo\api.py:466: DeprecationWarning: The model odoo.addons.pallas_web.models.web_about_us is not overriding the create method in batch
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo-bin", line 8, in <module>
+    odoo.cli.main()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\command.py", line 66, in main
+    o.run(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 180, in run
+    main(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 173, in main
+    rc = odoo.service.server.start(preload=preload, stop=stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1401, in start
+    rc = server.run(preload, stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 577, in run
+    rc = preload_registries(preload)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1305, in preload_registries
+    registry = Registry.new(dbname, update_module=update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\decorator.py", line 232, in fun
+    return caller(func, *(extras + args), **kw)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\tools\func.py", line 97, in locked
+    return func(inst, *args, **kwargs)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\registry.py", line 131, in new
+    odoo.modules.load_modules(registry, force_demo, status, update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 475, in load_modules
+    processed_modules += load_marked_modules(env, graph,
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 363, in load_marked_modules
+    loaded, processed = load_module_graph(
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 184, in load_module_graph
+    load_openerp_module(package.name)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\module.py", line 384, in load_openerp_module
+    __import__(qualname)
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\__init__.py", line 2, in <module>
+    from . import models
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\__init__.py", line 1, in <module>
+    from . import web_about_us
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 3, in <module>
+    class WebAboutUs(models.Model):
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 13, in WebAboutUs
+    @api.model
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 429, in model
+    return model_create_single(method)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 466, in model_create_single
+    warnings.warn(
+ 
+2025-04-20 09:47:04,608 15860 WARNING pallas py.warnings: C:\Users\nabil\Documents\Github\odoo18\odoo\api.py:466: DeprecationWarning: The model odoo.addons.pallas_web.models.web_about_us is not overriding the create method in batch
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo-bin", line 8, in <module>
+    odoo.cli.main()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\command.py", line 66, in main
+    o.run(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 180, in run
+    main(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 173, in main
+    rc = odoo.service.server.start(preload=preload, stop=stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1401, in start
+    rc = server.run(preload, stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 577, in run
+    rc = preload_registries(preload)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1305, in preload_registries
+    registry = Registry.new(dbname, update_module=update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\decorator.py", line 232, in fun
+    return caller(func, *(extras + args), **kw)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\tools\func.py", line 97, in locked
+    return func(inst, *args, **kwargs)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\registry.py", line 131, in new
+    odoo.modules.load_modules(registry, force_demo, status, update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 475, in load_modules
+    processed_modules += load_marked_modules(env, graph,
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 363, in load_marked_modules
+    loaded, processed = load_module_graph(
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 184, in load_module_graph
+    load_openerp_module(package.name)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\module.py", line 384, in load_openerp_module
+    __import__(qualname)
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\__init__.py", line 2, in <module>
+    from . import models
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\__init__.py", line 1, in <module>
+    from . import web_about_us
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 3, in <module>
+    class WebAboutUs(models.Model):
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 13, in WebAboutUs
+    @api.model
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 429, in model
+    return model_create_single(method)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 466, in model_create_single
+    warnings.warn(
+ 
+2025-04-20 09:47:07,066 15860 ERROR pallas odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2363, in __call__
+    response = request._serve_db()
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1891, in _serve_db
+    return self._transactioning(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1954, in _transactioning
+    return service_model.retrying(func, env=self.env)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\model.py", line 137, in retrying
+    result = func()
+             ^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1921, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2081, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\addons\base\models\ir_http.py", line 329, in _dispatch
+    result = endpoint(**request.params)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 727, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\controllers\main.py", line 141, in get_public_image
+    if record and record[field]:
+                  ~~~~~~^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\models.py", line 6981, in __getitem__
+    return self._fields[key].__get__(self)
+           ~~~~~~~~~~~~^^^^^
+KeyError: 'background_image'
+2025-04-20 09:47:08,235 15860 ERROR pallas odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2363, in __call__
+    response = request._serve_db()
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1891, in _serve_db
+    return self._transactioning(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1954, in _transactioning
+    return service_model.retrying(func, env=self.env)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\model.py", line 137, in retrying
+    result = func()
+             ^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1921, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2081, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\addons\base\models\ir_http.py", line 329, in _dispatch
+    result = endpoint(**request.params)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 727, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\controllers\main.py", line 141, in get_public_image
+    if record and record[field]:
+                  ~~~~~~^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\models.py", line 6981, in __getitem__
+    return self._fields[key].__get__(self)
+           ~~~~~~~~~~~~^^^^^
+KeyError: 'background_image'
+2025-04-20 09:47:11,735 15860 ERROR pallas odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2363, in __call__
+    response = request._serve_db()
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1891, in _serve_db
+    return self._transactioning(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1954, in _transactioning
+    return service_model.retrying(func, env=self.env)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\model.py", line 137, in retrying
+    result = func()
+             ^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1921, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2081, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\addons\base\models\ir_http.py", line 329, in _dispatch
+    result = endpoint(**request.params)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 727, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\controllers\main.py", line 141, in get_public_image
+    if record and record[field]:
+                  ~~~~~~^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\models.py", line 6981, in __getitem__
+    return self._fields[key].__get__(self)
+           ~~~~~~~~~~~~^^^^^
+KeyError: 'background_image'
+2025-04-20 09:47:23,178 15860 ERROR pallas odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2363, in __call__
+    response = request._serve_db()
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1891, in _serve_db
+    return self._transactioning(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1954, in _transactioning
+    return service_model.retrying(func, env=self.env)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\model.py", line 137, in retrying
+    result = func()
+             ^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1921, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2081, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\addons\base\models\ir_http.py", line 329, in _dispatch
+    result = endpoint(**request.params)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 727, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\controllers\main.py", line 141, in get_public_image
+    if record and record[field]:
+                  ~~~~~~^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\models.py", line 6981, in __getitem__
+    return self._fields[key].__get__(self)
+           ~~~~~~~~~~~~^^^^^
+KeyError: 'background_image'
+2025-04-20 09:47:24,052 15860 ERROR pallas odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2363, in __call__
+    response = request._serve_db()
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1891, in _serve_db
+    return self._transactioning(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1954, in _transactioning
+    return service_model.retrying(func, env=self.env)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\model.py", line 137, in retrying
+    result = func()
+             ^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1921, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2081, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\addons\base\models\ir_http.py", line 329, in _dispatch
+    result = endpoint(**request.params)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 727, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\controllers\main.py", line 141, in get_public_image
+    if record and record[field]:
+                  ~~~~~~^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\models.py", line 6981, in __getitem__
+    return self._fields[key].__get__(self)
+           ~~~~~~~~~~~~^^^^^
+KeyError: 'background_image'
+2025-04-20 09:47:25,196 15860 ERROR pallas odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2363, in __call__
+    response = request._serve_db()
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1891, in _serve_db
+    return self._transactioning(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1954, in _transactioning
+    return service_model.retrying(func, env=self.env)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\model.py", line 137, in retrying
+    result = func()
+             ^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1921, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2081, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\addons\base\models\ir_http.py", line 329, in _dispatch
+    result = endpoint(**request.params)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 727, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\controllers\main.py", line 141, in get_public_image
+    if record and record[field]:
+                  ~~~~~~^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\models.py", line 6981, in __getitem__
+    return self._fields[key].__get__(self)
+           ~~~~~~~~~~~~^^^^^
+KeyError: 'background_image'
+2025-04-20 09:47:41,598 15860 ERROR pallas odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2363, in __call__
+    response = request._serve_db()
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1891, in _serve_db
+    return self._transactioning(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1954, in _transactioning
+    return service_model.retrying(func, env=self.env)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\model.py", line 137, in retrying
+    result = func()
+             ^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1921, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2081, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\addons\base\models\ir_http.py", line 329, in _dispatch
+    result = endpoint(**request.params)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 727, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\controllers\main.py", line 141, in get_public_image
+    if record and record[field]:
+                  ~~~~~~^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\models.py", line 6981, in __getitem__
+    return self._fields[key].__get__(self)
+           ~~~~~~~~~~~~^^^^^
+KeyError: 'background_image'
+2025-04-20 09:47:48,194 15860 ERROR pallas odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2363, in __call__
+    response = request._serve_db()
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1891, in _serve_db
+    return self._transactioning(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1954, in _transactioning
+    return service_model.retrying(func, env=self.env)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\model.py", line 137, in retrying
+    result = func()
+             ^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1921, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2081, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\addons\base\models\ir_http.py", line 329, in _dispatch
+    result = endpoint(**request.params)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 727, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\controllers\main.py", line 141, in get_public_image
+    if record and record[field]:
+                  ~~~~~~^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\models.py", line 6981, in __getitem__
+    return self._fields[key].__get__(self)
+           ~~~~~~~~~~~~^^^^^
+KeyError: 'background_image'
+2025-04-20 11:00:41,349 15860 ERROR pallas odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2363, in __call__
+    response = request._serve_db()
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1891, in _serve_db
+    return self._transactioning(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1954, in _transactioning
+    return service_model.retrying(func, env=self.env)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\model.py", line 137, in retrying
+    result = func()
+             ^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 1921, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 2081, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\addons\base\models\ir_http.py", line 329, in _dispatch
+    result = endpoint(**request.params)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\http.py", line 727, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\controllers\main.py", line 141, in get_public_image
+    if record and record[field]:
+                  ~~~~~~^^^^^^^
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\models.py", line 6981, in __getitem__
+    return self._fields[key].__get__(self)
+           ~~~~~~~~~~~~^^^^^
+KeyError: 'background_image'
+2025-04-20 11:01:48,842 12644 WARNING pallas py.warnings: C:\Users\nabil\Documents\Github\odoo18\odoo\api.py:466: DeprecationWarning: The model odoo.addons.pallas_web.models.web_about_us is not overriding the create method in batch
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo-bin", line 8, in <module>
+    odoo.cli.main()
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\command.py", line 66, in main
+    o.run(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 180, in run
+    main(args)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\cli\server.py", line 173, in main
+    rc = odoo.service.server.start(preload=preload, stop=stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1401, in start
+    rc = server.run(preload, stop)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 577, in run
+    rc = preload_registries(preload)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\service\server.py", line 1305, in preload_registries
+    registry = Registry.new(dbname, update_module=update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\.venv\Lib\site-packages\decorator.py", line 232, in fun
+    return caller(func, *(extras + args), **kw)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\tools\func.py", line 97, in locked
+    return func(inst, *args, **kwargs)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\registry.py", line 131, in new
+    odoo.modules.load_modules(registry, force_demo, status, update_module)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 475, in load_modules
+    processed_modules += load_marked_modules(env, graph,
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 363, in load_marked_modules
+    loaded, processed = load_module_graph(
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\loading.py", line 184, in load_module_graph
+    load_openerp_module(package.name)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\modules\module.py", line 384, in load_openerp_module
+    __import__(qualname)
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\__init__.py", line 2, in <module>
+    from . import models
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\__init__.py", line 1, in <module>
+    from . import web_about_us
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 3, in <module>
+    class WebAboutUs(models.Model):
+  File "c:\users\nabil\documents\github\odoo18\custom-pallas\pallas_web\models\web_about_us.py", line 13, in WebAboutUs
+    @api.model
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 429, in model
+    return model_create_single(method)
+  File "C:\Users\nabil\Documents\Github\odoo18\odoo\api.py", line 466, in model_create_single
+    warnings.warn(
+ 

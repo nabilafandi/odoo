@@ -1,5 +1,5 @@
 from odoo import http
-from odoo.http import request, Response
+from odoo.http import request, Response, content_disposition
 import json
 import base64
 
@@ -110,7 +110,10 @@ class WebAdminController(http.Controller):
             json.dumps(data),
             headers={
                 'Content-Type': 'application/json',
+                # 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type',
             },
             status=status
         )
@@ -126,6 +129,28 @@ class WebAdminController(http.Controller):
             return None, self._make_json_response({'error': error_message}, status=404)
         return record, None
 
+    def _get_public_image_url(self, model, rec_id, field):
+        """Generate URL for public image access"""
+        return f"{self._get_base_url()}/api/public/image/{model}/{rec_id}/{field}"
+
+    @http.route('/api/public/image/<string:model>/<int:id>/<string:field>',
+                type='http', auth="public", methods=['GET'], csrf=False)
+    def get_public_image(self, model, id, field, **kwargs):
+        """Public endpoint to serve images without authentication"""
+        record = request.env[model].sudo().browse(id)
+        if record and record[field]:
+            image_data = base64.b64decode(record[field])
+            return request.make_response(
+                image_data,
+                headers=[
+                    ('Content-Type', 'image/jpeg'),
+                    ('Content-Disposition', content_disposition(f'{field}.jpg')),
+                    ('Cache-Control', 'public, max-age=86400'),  # 1 day cache
+                    ('Access-Control-Allow-Origin', '*')
+                ]
+            )
+        return request.not_found()
+
     @http.route('/api/about-us', type='http', auth='public', methods=['GET'], csrf=False)
     def get_about_us(self, **kwargs):
         print('dsadsad')
@@ -137,12 +162,10 @@ class WebAdminController(http.Controller):
         data = {
             'company_name': request.env.user.company_id.name,
             'title': about_us.title,
-            'title_image_url': f"{base_url}/web/image/web.about.us/{about_us.id}/title_image" if about_us.title_image else None,
-            'tagline': about_us.tagline,
+            'title_image_url': self._get_public_image_url('web.about.us', about_us.id, 'title_image') if about_us.title_image else None,            'tagline': about_us.tagline,
             'description': about_us.description,
             'event_images': [
-                {'id': img.id, 'url': f"{base_url}/web/image/{img._name}/{img.id}/image"}
-                for img in about_us.event_images
+                {'id': img.id, 'url': self._get_public_image_url(img._name, img.id, 'image')} for img in about_us.event_images
             ]
         }
 
@@ -157,6 +180,7 @@ class WebAdminController(http.Controller):
         base_url = self._get_base_url()
         data = {
             'tagline': home.tagline,
+            'background_image': self._get_public_image_url('web.about.us', home.id, 'background_image') if home.background_image else None,
             'background_image': f"{base_url}/web/image/{home._name}/{home.id}/background_image" if home.background_image else None,
         }
 
