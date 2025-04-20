@@ -180,8 +180,7 @@ class WebAdminController(http.Controller):
         base_url = self._get_base_url()
         data = {
             'tagline': home.tagline,
-            'background_image': self._get_public_image_url('web.about.us', home.id, 'background_image') if home.background_image else None,
-            'background_image': f"{base_url}/web/image/{home._name}/{home.id}/background_image" if home.background_image else None,
+            'background_image': self._get_public_image_url('web.home', home.id, 'background_image') if home.background_image else None,
         }
 
         return self._make_json_response(data)
@@ -202,9 +201,12 @@ class WebAdminController(http.Controller):
             'link_whatsapp': location.link_whatsapp,
             'link_map': location.link_map,
             'location_images': [
-                {'id': img.id, 'url': f"{base_url}/web/image/{img._name}/{img.id}/image"}
+                {
+                    'id': img.id, 
+                    'url': self._get_public_image_url(img._name, img.id, 'image') if img.image else None,
+                    }
                 for img in location.location_images
-            ]
+            ],
         }
 
         return self._make_json_response(data)
@@ -218,9 +220,12 @@ class WebAdminController(http.Controller):
         base_url = self._get_base_url()
         data = {
             "name": promo.name,
-            "banner_image": f"{base_url}/web/image/{promo._name}/{promo.id}/banner_image",
+            "banner_image": self._get_public_image_url('web.promo', promo.id, 'banner_image') if promo.banner_image else None,
             "promo_lines": [
-                {"id": line.id, "name": line.name, "description": line.description, "image_url":f"{base_url}/web/image/{line._name}/{line.id}/image"}
+                {"id": line.id, "name": line.name, "description": line.description, 
+                "image_url":self._get_public_image_url(line._name, line.id, 'image') if line.image else None,
+                # "image_url":f"{base_url}/web/image/{line._name}/{line.id}/image",
+                }
                 for line in promo.promo_ids
             ]
         }
