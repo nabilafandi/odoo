@@ -498,3 +498,39 @@ class CustomWebsiteSale(WebsiteSale):
         print(values)
 
         return self._make_json_response(values,200)
+
+    @http.route('/api/cart/add', type='http', auth='public', methods=['POST'], csrf=False)
+    def add_to_cart(self, product_id=None, quantity=1, **kwargs):
+        """API endpoint to add product to cart."""
+        if not product_id:
+            return self._make_json_response({'error': 'Missing product_id'}, status=400)
+
+        try:
+            product_id = int(product_id)
+            quantity = float(quantity)
+        except (ValueError, TypeError):
+            return self._make_json_response({'error': 'Invalid input format'}, status=400)
+
+        # Get current website and pricelist
+        website = request.website
+        pricelist = website.pricelist_id
+
+        # Fetch product template
+        product = request.env['product.product'].sudo().browse(product_id)
+        if not product.exists() or not product.is_published:
+            return self._make_json_response({'error': 'Product not found or unavailable'}, status=404)
+
+        # Get or create sale order (cart)
+        order = website._get_current_pricelist()
+        if not order:
+            order = website._create_empty_carrier_session()
+
+        # Add product to cart
+        order._cart_update(product_id=product_id, add_qty=quantity)
+
+        return self._make_json_response({
+            'message': 'Product added successfully',
+            'cart_total': len(order.order_line),
+            'product_id': product_id,
+            'quantity': quantity
+        }, status=200)
