@@ -446,8 +446,11 @@ publicWidget.registry.PaymentForm = publicWidget.Widget.extend({
         const div = document.createElement('div');
         div.innerHTML = processingValues['redirect_form_html'];
         const redirectForm = div.querySelector('form');
+        console.log('test',div.innerHTML)
         redirectForm.setAttribute('id', 'o_payment_redirect_form');
+        console.log('test2')
         redirectForm.setAttribute('target', '_top');  // Ensures redirections when in an iframe.
+        console.log('test3')
 
         // Submit the form.
         document.body.appendChild(redirectForm);
