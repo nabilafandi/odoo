@@ -1,17 +1,18 @@
 /** @odoo-module */
 
-import { App, Component, xml } from "@odoo/owl";
-import {
-    defineRootNode,
-    getActiveElement,
-    getCurrentDimensions,
-} from "@web/../lib/hoot-dom/helpers/dom";
+import { App } from "@odoo/owl";
+import { getActiveElement, getCurrentDimensions } from "@web/../lib/hoot-dom/helpers/dom";
 import { setupEventActions } from "@web/../lib/hoot-dom/helpers/events";
+import { isInstanceOf } from "@web/../lib/hoot-dom/hoot_dom_utils";
 import { HootError } from "../hoot_utils";
-import { queryOne } from "@odoo/hoot-dom";
+import { subscribeToTransitionChange } from "../mock/animation";
+import { getViewPortHeight, getViewPortWidth } from "../mock/window";
 
 /**
- * @typedef {Parameters<typeof import("@odoo/owl").mount>} MountParameters
+ * @typedef {Parameters<typeof import("@odoo/owl").mount>[2] & {
+ *  className: string | string[];
+ *  target?: import("@odoo/hoot-dom").Target;
+ * }} MountOnFixtureOptions
  *
  * @typedef {{
  *  component: import("@odoo/owl").ComponentConstructor;
@@ -23,41 +24,34 @@ import { queryOne } from "@odoo/hoot-dom";
 // Global
 //-----------------------------------------------------------------------------
 
-const { customElements, document, getSelection, HTMLElement } = globalThis;
+const { customElements, document, getSelection, HTMLElement, Promise, WeakSet } = globalThis;
 
 //-----------------------------------------------------------------------------
 // Internal
 //-----------------------------------------------------------------------------
 
-const FIXTURE_COMMON_STYLE = [
-    "position: fixed",
-    "height: 100vh",
-    "width: 100vw",
-    "left: 50%",
-    "top: 50%",
-    "transform: translate(-50%, -50%)",
-];
-const FIXTURE_DEBUG_STYLE = [
-    ...FIXTURE_COMMON_STYLE,
-    "background-color: inherit",
-    "color: inherit",
-    "z-index: 3",
-].join(";");
-const FIXTURE_STYLE = [...FIXTURE_COMMON_STYLE, "opacity: 0", "z-index: -1"].join(";");
+/**
+ * @param {HTMLIFrameElement} iframe
+ */
+function waitForIframe(iframe) {
+    return new Promise((resolve) => iframe.addEventListener("load", resolve));
+}
 
 const destroyed = new WeakSet();
-
-customElements.define("hoot-fixture", class HootFixture extends HTMLElement {});
+let allowFixture = false;
+/** @type {HootFixtureElement | null} */
+let currentFixture = null;
+let shouldPrepareNextFixture = true; // Prepare setup for first test
 
 //-----------------------------------------------------------------------------
 // Exports
 //-----------------------------------------------------------------------------
 
 /**
- * @param {App | Component} target
+ * @param {App | import("@odoo/owl").Component} target
  */
 export function destroy(target) {
-    const app = target instanceof App ? target : target.__owl__.app;
+    const app = isInstanceOf(target, App) ? target : target.__owl__.app;
     if (destroyed.has(app)) {
         return;
     }
@@ -69,96 +63,161 @@ export function destroy(target) {
  * @param {import("./runner").Runner} runner
  */
 export function makeFixtureManager(runner) {
-    const cleanupFixture = () => {
+    function cleanup() {
         allowFixture = false;
-        if (!fixture) {
-            return;
-        }
-        shouldPrepareNextFixture = true;
-        fixture.remove();
-        fixture = null;
-    };
 
-    const getFixture = () => {
-        if (!allowFixture) {
-            throw new HootError(`Cannot access fixture outside of a test.`);
+        if (currentFixture) {
+            shouldPrepareNextFixture = true;
+            currentFixture.remove();
+            currentFixture = null;
         }
-        if (!fixture) {
-            fixture = document.createElement("hoot-fixture");
-            if (runner.debug || runner.config.headless) {
-                fixture.setAttribute("style", FIXTURE_DEBUG_STYLE);
-            } else {
-                fixture.setAttribute("style", FIXTURE_STYLE);
+    }
+
+    function getFixture() {
+        if (!allowFixture) {
+            throw new HootError(`cannot access fixture outside of a test.`);
+        }
+        if (!currentFixture) {
+            // Prepare fixture once to not force layouts/reflows
+            currentFixture = document.createElement(HootFixtureElement.TAG_NAME);
+            if (runner.debug || runner.headless) {
+                currentFixture.show();
             }
 
             const { width, height } = getCurrentDimensions();
-            fixture.style.width = `${width}px`;
-            fixture.style.height = `${height}px`;
+            if (width !== getViewPortWidth()) {
+                currentFixture.style.width = `${width}px`;
+            }
+            if (height !== getViewPortHeight()) {
+                currentFixture.style.height = `${height}px`;
+            }
 
-            setupEventActions(fixture);
-
-            document.body.appendChild(fixture);
+            document.body.appendChild(currentFixture);
         }
-        return fixture;
-    };
+        return currentFixture;
+    }
 
-    /**
-     * @param {MountParameters[0] | string} ComponentClass
-     * @param {MountParameters[2]} config
-     * @param {import("@odoo/hoot-dom").Target} [target]
-     */
-    const mountOnFixture = (ComponentClass, config, target) => {
-        if (target && !fixture) {
-            throw new HootError(`Cannot mount on a custom target before the fixture is created.`);
-        }
-
-        if (typeof ComponentClass === "string") {
-            ComponentClass = class extends Component {
-                static props = {};
-                static template = xml`${ComponentClass}`;
-            };
-        }
-
-        const app = new App(ComponentClass, {
-            name: `TEST: ${ComponentClass.name}`,
-            test: true,
-            warnIfNoStaticProps: true,
-            ...config,
-        });
-
-        runner.after(() => destroy(app));
-
-        return app.mount(target ? queryOne(target) : getFixture());
-    };
-
-    const setupFixture = () => {
+    function setup() {
         allowFixture = true;
-        if (!shouldPrepareNextFixture) {
-            return;
+
+        if (shouldPrepareNextFixture) {
+            shouldPrepareNextFixture = false;
+
+            // Reset focus & selection
+            getActiveElement().blur();
+            getSelection().removeAllRanges();
         }
-        shouldPrepareNextFixture = false;
-
-        // Reset focus & selection
-        getActiveElement().blur();
-        getSelection().removeAllRanges();
-    };
-
-    let allowFixture = false;
-    /** @type {HTMLElement | null} */
-    let fixture = null;
-    let shouldPrepareNextFixture = true; // Prepare setup for first test
-
-    runner.beforeAll(() => {
-        defineRootNode(getFixture);
-    });
-    runner.afterAll(() => {
-        defineRootNode(null);
-    });
+    }
 
     return {
-        cleanup: cleanupFixture,
-        setup: setupFixture,
+        cleanup,
+        setup,
         get: getFixture,
-        mount: mountOnFixture,
     };
+}
+
+export class HootFixtureElement extends HTMLElement {
+    static CLASSES = {
+        transitions: "allow-transitions",
+        show: "show-fixture",
+    };
+    static TAG_NAME = "hoot-fixture";
+
+    static styleElement = document.createElement("style");
+
+    static {
+        customElements.define(this.TAG_NAME, this);
+
+        this.styleElement.id = "hoot-fixture-style";
+        this.styleElement.textContent = /* css */ `
+            ${this.TAG_NAME} {
+                position: fixed !important;
+                height: 100vh;
+                width: 100vw;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                opacity: 0;
+                z-index: -1;
+            }
+
+            ${this.TAG_NAME}.${this.CLASSES.show} {
+                background-color: inherit;
+                color: inherit;
+                opacity: 1;
+                z-index: 3;
+            }
+
+            ${this.TAG_NAME}:not(.${this.CLASSES.transitions}) * {
+                animation: none !important;
+                transition: none !important;
+            }
+        `;
+    }
+
+    get hasIframes() {
+        return this._iframes.size > 0;
+    }
+
+    /** @private */
+    _observer = new MutationObserver(this._onFixtureMutation.bind(this));
+    /**
+     * @private
+     * @type {Map<HTMLIFrameElement, Promise<void>>}
+     */
+    _iframes = new Map();
+
+    connectedCallback() {
+        setupEventActions(this);
+        subscribeToTransitionChange((allowTransitions) =>
+            this.classList.toggle(this.constructor.CLASSES.transitions, allowTransitions)
+        );
+
+        this._observer.observe(this, { childList: true, subtree: true });
+        this._lookForIframes();
+    }
+
+    disconnectedCallback() {
+        this._iframes.clear();
+        this._observer.disconnect();
+    }
+
+    hide() {
+        this.classList.remove(this.constructor.CLASSES.show);
+    }
+
+    async waitForIframes() {
+        await Promise.all(this._iframes.values());
+    }
+
+    show() {
+        this.classList.add(this.constructor.CLASSES.show);
+    }
+
+    /**
+     * @private
+     */
+    _lookForIframes() {
+        const toRemove = new Set(this._iframes.keys());
+        for (const iframe of this.getElementsByTagName("iframe")) {
+            if (toRemove.delete(iframe)) {
+                continue;
+            }
+            this._iframes.set(iframe, waitForIframe(iframe));
+            setupEventActions(iframe.contentWindow);
+        }
+        for (const iframe of toRemove) {
+            this._iframes.delete(iframe);
+        }
+    }
+
+    /**
+     * @private
+     * @type {MutationCallback}
+     */
+    _onFixtureMutation(mutations) {
+        if (mutations.some((mutation) => mutation.addedNodes)) {
+            this._lookForIframes();
+        }
+    }
 }

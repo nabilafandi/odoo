@@ -4,8 +4,9 @@ import { queryOne } from "@odoo/hoot-dom";
 import { Component, xml } from "@odoo/owl";
 import { mountWithCleanup } from "@web/../tests/web_test_helpers";
 import { getContent, getSelection, setContent } from "./selection";
-import { animationFrame } from "@odoo/hoot-mock";
+import { animationFrame, tick } from "@odoo/hoot-mock";
 import { dispatchCleanForSave } from "./dispatch";
+import { fixInvalidHTML } from "@html_editor/utils/sanitize";
 
 export const Direction = {
     BACKWARD: "BACKWARD",
@@ -23,7 +24,7 @@ class TestEditor extends Component {
 
     setup() {
         const props = this.props;
-        const content = props.content;
+        const content = fixInvalidHTML(props.content);
         this.wysiwygProps = Object.assign({}, this.props.wysiwygProps);
         const iframe = this.props.wysiwygProps.iframe;
         const oldOnLoad = this.wysiwygProps.onLoad;
@@ -33,14 +34,13 @@ class TestEditor extends Component {
                 // @todo @phoenix move it to setupMultiEditor
                 if (iframe) {
                     // el is here the body
-                    const content = props.content || "";
-                    var html = `<div>${content}</div><style>${props.styleContent}</style>`;
+                    var html = `<div>${content || ""}</div><style>${props.styleContent}</style>`;
                     el.innerHTML = html;
                     el = el.firstChild;
                 }
-                if (props.content) {
+                if (content) {
                     el.setAttribute("contenteditable", true); // so we can focus it if needed
-                    const configSelection = getSelection(el, props.content);
+                    const configSelection = getSelection(el, content);
                     if (configSelection) {
                         el.focus();
                     }
@@ -102,11 +102,7 @@ export async function setupEditor(content, options = {}) {
     // awaiting for mountWithCleanup is not enough when mounted in an iframe,
     // @see Wysiwyg.onMounted
     const editor = await attachedEditor;
-    const plugins = new Map(
-        editor.plugins.map((plugin) => {
-            return [plugin.constructor.id, plugin];
-        })
-    );
+    const plugins = new Map(editor.plugins.map((plugin) => [plugin.constructor.id, plugin]));
     if (plugins.get("embeddedComponents")) {
         // await an extra animation frame for embedded components mounting
         // TODO @phoenix: would be more accurate to register mounting
@@ -149,10 +145,12 @@ export async function testEditor(config) {
     if (!compareFunction) {
         compareFunction = (content, expected, phase) => {
             expect(content).toBe(expected, {
-                message: `(testEditor) ${phase} is strictly equal to %actual%"`,
+                message: `(testEditor) ${phase} should be strictly equal to ${expected}`,
             });
         };
     }
+    const isMobileTest = config.props?.mobile;
+    delete config.props?.mobile;
     const { el, editor } = await setupEditor(contentBefore, config);
     // The stageSelection should have been triggered by the click on
     // the editable. As we set the selection programmatically, we dispatch the
@@ -163,8 +161,24 @@ export async function testEditor(config) {
     editor.shared.history.stageSelection();
 
     if (config.props?.iframe) {
-        expect("iframe").toHaveCount(1);
+        const selection = editor.document.getSelection();
+        // If there is no selection, iframe count remains 1 on both mobile
+        // and desktop since the toolbar is not open.
+        // When a selection exists:
+        //   - On mobile: The toolbar remains open regardless of whether
+        //     selection is collapsed or not, so the iframe count is 2.
+        //   - On desktop: The toolbar opens only when selection is not
+        //     collapsed, resulting in 2 iframes; otherwise, it remains 1.
+        // 2 iframes because the font size input is inside its own iframe.
+        let iframeCount = 1;
+        if (selection.anchorNode) {
+            iframeCount = isMobileTest || !selection.isCollapsed ? 2 : 1;
+        }
+        expect("iframe").toHaveCount(iframeCount);
     }
+
+    // Wait for selectionchange handlers to react before any actual testing.
+    await tick();
 
     if (contentBeforeEdit) {
         // we should do something before (sanitize)

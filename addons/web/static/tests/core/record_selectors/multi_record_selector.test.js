@@ -247,7 +247,8 @@ test("Backspace do nothing when the input is currently edited", async () => {
 });
 
 // Desktop only because a kanban view is used instead of a list in mobile
-test.tags("desktop")("Can pass domain to search more", async () => {
+test.tags("desktop");
+test("Can pass domain to search more", async () => {
     Partner._records.push(
         { id: 4, name: "David" },
         { id: 5, name: "Eve" },
@@ -256,8 +257,7 @@ test.tags("desktop")("Can pass domain to search more", async () => {
         { id: 8, name: "Helen" },
         { id: 9, name: "Ivy" }
     );
-    Partner._views["list,false"] = /* xml */ `<list><field name="name"/></list>`;
-    Partner._views["search,false"] = /* xml */ `<search/>`;
+    Partner._views["list"] = /* xml */ `<list><field name="name"/></list>`;
     await mountMultiRecordSelector({
         resModel: "partner",
         resIds: [],

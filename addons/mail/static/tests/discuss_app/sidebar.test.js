@@ -81,10 +81,9 @@ test("toggling category button does not hide active sub thread", async () => {
 });
 
 test("Closing a category sends the updated user setting to the server.", async () => {
-    onRpc("/web/dataset/call_kw/res.users.settings/set_res_users_settings", async (request) => {
-        const { params } = await request.json();
+    onRpc("res.users.settings", "set_res_users_settings", ({ kwargs }) => {
         step("/web/dataset/call_kw/res.users.settings/set_res_users_settings");
-        expect(params.kwargs.new_settings.is_discuss_sidebar_category_channel_open).toBe(false);
+        expect(kwargs.new_settings.is_discuss_sidebar_category_channel_open).toBe(false);
     });
     await start();
     await openDiscuss();
@@ -101,10 +100,9 @@ test("Opening a category sends the updated user setting to the server.", async (
         user_id: serverState.userId,
         is_discuss_sidebar_category_channel_open: false,
     });
-    onRpc("/web/dataset/call_kw/res.users.settings/set_res_users_settings", async (request) => {
-        const { params } = await request.json();
+    onRpc("res.users.settings", "set_res_users_settings", ({ kwargs }) => {
         step("/web/dataset/call_kw/res.users.settings/set_res_users_settings");
-        expect(params.kwargs.new_settings.is_discuss_sidebar_category_channel_open).toBe(true);
+        expect(kwargs.new_settings.is_discuss_sidebar_category_channel_open).toBe(true);
     });
     await start();
     await openDiscuss();
@@ -289,7 +287,7 @@ test("sidebar: basic chat rendering", async () => {
     await openDiscuss();
     await contains(".o-mail-DiscussSidebarChannel");
     await contains(".o-mail-DiscussSidebarChannel", { text: "Demo" });
-    await contains(".o-mail-DiscussSidebarChannel img[data-alt='Thread Image']");
+    await contains(".o-mail-DiscussSidebarChannel img[alt='Thread Image']");
     await contains(
         ".o-mail-DiscussSidebarChannel .o-mail-DiscussSidebarChannel-commands [title='Unpin Conversation']"
     );
@@ -367,7 +365,8 @@ test("sidebar: unpin chat from bus", async () => {
     await contains(".o-mail-Discuss-threadName", { count: 0, value: "Demo" });
 });
 
-test.tags("focus required")("chat - channel should count unread message", async () => {
+test.tags("focus required");
+test("chat - channel should count unread message", async () => {
     const pyEnv = await startServer();
     const partnerId = pyEnv["res.partner"].create({
         name: "Demo",
@@ -393,7 +392,8 @@ test.tags("focus required")("chat - channel should count unread message", async 
     await contains(".o-discuss-badge", { count: 0 });
 });
 
-test.tags("focus required")("mark channel as seen on last message visible", async () => {
+test.tags("focus required");
+test("mark channel as seen on last message visible", async () => {
     const pyEnv = await startServer();
     const channelId = pyEnv["discuss.channel"].create({
         name: "test",
@@ -1263,7 +1263,8 @@ test("Unpinning channel closes its chat window", async () => {
     await contains(".o-mail-ChatWindow", { count: 0, text: "Sales" });
 });
 
-test.tags("focus required")("Update channel data via bus notification", async () => {
+test.tags("focus required");
+test("Update channel data via bus notification", async () => {
     const pyEnv = await startServer();
     const channelId = pyEnv["discuss.channel"].create({
         name: "Sales",
@@ -1275,10 +1276,10 @@ test.tags("focus required")("Update channel data via bus notification", async ()
     const env2 = await start({ asTab: true });
     await openDiscuss(channelId, { target: env1 });
     await openDiscuss(channelId, { target: env2 });
-    await contains(".o-mail-DiscussSidebarChannel", { text: "Sales", target: env1 });
-    await insertText(".o-mail-Discuss-threadName", "test", { target: env1 });
+    await contains(`${env1.selector} .o-mail-DiscussSidebarChannel`, { text: "Sales" });
+    await insertText(`${env1.selector} .o-mail-Discuss-threadName`, "test");
     await triggerHotkey("Enter");
-    await contains(".o-mail-DiscussSidebarChannel", { text: "Salestest", target: env2 });
+    await contains(`${env2.selector} .o-mail-DiscussSidebarChannel`, { text: "Salestest" });
 });
 
 test("sidebar: show loading on initial opening", async () => {

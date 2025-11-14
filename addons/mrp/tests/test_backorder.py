@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from odoo import Command
 from odoo.addons.mrp.tests.common import TestMrpCommon
 from odoo.tests import Form
-from odoo.tests.common import TransactionCase
+from odoo.tests.common import TransactionCase, freeze_time
 
 
 class TestMrpProductionBackorder(TestMrpCommon):
@@ -477,6 +477,45 @@ class TestMrpProductionBackorder(TestMrpCommon):
         self.assertEqual(production.name.split('-')[0], backorder_ids.name.split('-')[0])
         self.assertEqual(int(production.name.split('-')[1]) + 1, int(backorder_ids.name.split('-')[1]))
 
+    def test_backorder_name_with_multiple_backorder(self):
+        """ Test that the backorder name is correct when splitting and creating
+        multiple backorders.
+        """
+        # create a mo for 5 units and split it into 2
+        mo = self.generate_mo(qty_final=5)[0]
+        action = mo.action_split()
+        wizard = Form(self.env[action['res_model']].with_context(action['context']))
+        wizard.counter = 2
+        wizard.save().action_split()
+
+        # Ensure that the MO was correctly split into 2 MOs
+        self.assertEqual(len(mo.procurement_group_id.mrp_production_ids), 2)
+        mo_2 = mo.procurement_group_id.mrp_production_ids[1]
+
+        # Check that the sequence names are correct after splitting
+        self.assertEqual(mo.name.split('-')[1], '001')
+        self.assertEqual(mo_2.name.split('-')[1], '002')
+
+        # Validate the first MO and create a backorder
+        mo_form = Form(mo)
+        mo_form.qty_producing = 1
+        mo = mo_form.save()
+        action = mo.button_mark_done()
+        backorder = Form(self.env['mrp.production.backorder'].with_context(**action['context']))
+        backorder.save().action_backorder()
+        backorder_mo1 = mo.procurement_group_id.mrp_production_ids[-1]
+        self.assertEqual(backorder_mo1.name.split('-')[1], '003')
+
+        # Validate the second MO and create another backorder
+        mo_form = Form(mo_2)
+        mo_form.qty_producing = 1
+        mo = mo_form.save()
+        action = mo.button_mark_done()
+        backorder = Form(self.env['mrp.production.backorder'].with_context(**action['context']))
+        backorder.save().action_backorder()
+        backorder_mo2 = mo_2.procurement_group_id.mrp_production_ids[-1]
+        self.assertEqual(backorder_mo2.name.split('-')[1], '004')
+
     def test_split_draft(self):
         mo_form = Form(self.env['mrp.production'])
         mo_form.product_id = self.bom_1.product_id
@@ -626,6 +665,15 @@ class TestMrpProductionBackorder(TestMrpCommon):
         self.assertEqual(len(mo.procurement_group_id.mrp_production_ids), 10)
         self.assertEqual(mo.product_qty, 1)
         self.assertEqual(mo.move_raw_ids.mapped('product_uom_qty'), [0.5, 1])
+
+    def test_split_multiple_mo(self):
+        """ Checks that we can open the `split_production` wizard with multiple MOs at once
+        """
+        productions = self.env['mrp.production'].create([{
+            'product_qty': 5,
+            'bom_id': self.bom_1.id,
+        } for _ in range(2)])
+        Form.from_action(self.env, productions.action_split())
 
     def test_split_mo_partially_available(self):
         """
@@ -910,6 +958,7 @@ class TestMrpWorkorderBackorder(TransactionCase):
         cls.bom_finished1.bom_line_ids[0].operation_id = cls.bom_finished1.operation_ids[0].id
         cls.bom_finished1.bom_line_ids[1].operation_id = cls.bom_finished1.operation_ids[1].id
 
+    @freeze_time('2025-10-27 12:00:00')
     def test_mrp_backorder_operations(self):
         """
         Checks that the operations'data are correclty set on a backorder:
@@ -962,7 +1011,10 @@ class TestMrpWorkorderBackorder(TransactionCase):
         op_6.button_start()
         op_6.button_finish()
         bo_2.button_mark_done()
-        self.assertRecordValues(op_6, [{'state': 'done', 'qty_remaining': 0.0}])
+        self.assertRecordValues(bo_2.workorder_ids, [
+            {'state': 'cancel', 'qty_remaining': 0.0, 'duration': 0.0},
+            {'state': 'done', 'qty_remaining': 0.0, 'duration': 240.0}
+        ])
 
     def test_kit_bom_order_splitting(self):
         self.env.ref('base.group_user').implied_ids += (

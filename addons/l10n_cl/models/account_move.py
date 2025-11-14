@@ -42,7 +42,7 @@ class AccountMove(models.Model):
         elif self.partner_id.l10n_cl_sii_taxpayer_type == '1' and self.partner_id_vat == '60805000-0':
             domain += [('code', 'not in', ['39', '70', '71'])]
         elif self.partner_id.l10n_cl_sii_taxpayer_type == '2':
-            domain += [('code', 'in', ['70', '71', '56', '61'])]
+            domain += [('code', '=', '71')]
         elif self.partner_id.l10n_cl_sii_taxpayer_type == '3':
             domain += [('code', 'in', ['35', '38', '39', '41', '56', '61'])]
         elif self.partner_id.country_id.code != 'CL' or self.partner_id.l10n_cl_sii_taxpayer_type == '4':
@@ -131,7 +131,13 @@ class AccountMove(models.Model):
 
     def _get_name_invoice_report(self):
         self.ensure_one()
-        if self.l10n_latam_use_documents and self.company_id.account_fiscal_country_id.code == 'CL':
+        if (
+            self.l10n_latam_use_documents and self.company_id.account_fiscal_country_id.code == "CL"
+            and (
+                self.move_type in {"out_invoice", "out_refund"}
+                or self.l10n_latam_document_type_id.code == "46"
+            )
+        ):
             return 'l10n_cl.report_invoice_document'
         return super()._get_name_invoice_report()
 

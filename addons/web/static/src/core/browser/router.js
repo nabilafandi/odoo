@@ -181,7 +181,7 @@ export function urlToState(urlObj) {
 
     const [prefix, ...splitPath] = urlObj.pathname.split("/").filter(Boolean);
 
-    if (prefix === "odoo" || isScopedApp()) {
+    if (["odoo", "scoped_app"].includes(prefix)) {
         const actionParts = [...splitPath.entries()].filter(
             ([_, part]) => !isNumeric(part) && part !== "new"
         );
@@ -225,6 +225,11 @@ export function urlToState(urlObj) {
         if (activeAction) {
             Object.assign(state, activeAction);
             state.actionStack = actions;
+        }
+        if (prefix === "scoped_app" && !isDisplayStandalone()) {
+            // make sure /scoped_app are redirected to /odoo when using the browser instead of the PWA
+            const url = browser.location.origin + router.stateToUrl(state);
+            urlObj.href = url;
         }
     }
     return state;
@@ -271,12 +276,36 @@ browser.addEventListener("popstate", (ev) => {
         return;
     }
     state = ev.state?.nextState || router.urlToState(new URL(browser.location));
+    // The `popstate` event is bound on window from here as well as from
+    // wysiwyg_adapter. In Edit mode, clicking the browser's back button
+    // triggers this event first, followed by the `wysiwyg_adapter` event. This
+    // sequence causes a traceback, leading to a force exit from Edit mode. To
+    // prevent this issue, we add a trigger to invoke the `BEFORE_ROUTE_CHANGE`
+    // event which listened by `wysiwyg_adapter` so that when popstate event is
+    // trigerred here we notify the `wysiwyg_adapter` using
+    // `BEFORE_ROUTE_CHANGE`. In handler of `BEFORE_ROUTE_CHANGE` we tweak the
+    // code so that the dialog closes properly and prevents the traceback.
+    routerBus.trigger("BEFORE_ROUTE_CHANGE");
     // Some client actions want to handle loading their own state. This is a ugly hack to allow not
     // reloading the webclient's state when they manipulate history.
     if (!ev.state?.skipRouteChange && !router.skipLoad) {
         routerBus.trigger("ROUTE_CHANGE");
     }
     router.skipLoad = false;
+});
+
+/**
+ * When the user navigates the history using the back/forward button, some browsers (Safari iOS and
+ * Safari MacOS) can restore the page using the `bfcache` (especially when we come back from an
+ * external website). Unfortunately, Odoo wasn't designed to be compatible with this cache, which
+ * leads to inconsistencies. When the `bfcache` is used to restore a page, we reload the current
+ * page, to be sure that all the elements have been rendered correctly.
+ */
+browser.addEventListener("pageshow", (ev) => {
+    if (ev.persisted) {
+        browser.clearTimeout(pushTimeout);
+        routerBus.trigger("ROUTE_CHANGE");
+    }
 });
 
 /**

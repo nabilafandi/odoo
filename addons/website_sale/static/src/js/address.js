@@ -3,6 +3,7 @@
 import publicWidget from "@web/legacy/js/public/public_widget";
 import { rpc } from "@web/core/network/rpc";
 import { debounce } from "@web/core/utils/timing";
+import { redirect } from '@web/core/utils/urls';
 
 publicWidget.registry.websiteSaleAddress = publicWidget.Widget.extend({
     // /shop/address
@@ -188,8 +189,8 @@ publicWidget.registry.websiteSaleAddress = publicWidget.Widget.extend({
                 '/shop/address/submit',
                 new FormData(this.addressForm),
             )
-            if (result.successUrl) {
-                window.location = result.successUrl;
+            if (result.redirectUrl) {
+                redirect(result.redirectUrl);
             } else {
                 // Highlight missing/invalid form values
                 document.querySelectorAll('.is-invalid').forEach(element => {

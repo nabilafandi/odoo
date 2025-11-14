@@ -6,6 +6,18 @@ import { parseUrl } from "../local_helpers";
 import { Suite } from "../../core/suite";
 import { Test } from "../../core/test";
 
+function disableHighlighting() {
+    if (!window.Prism) {
+        return () => {};
+    }
+    const { highlight } = window.Prism;
+    window.Prism.highlight = (text) => text;
+
+    return function restoreHighlighting() {
+        window.Prism.highlight = highlight;
+    };
+}
+
 describe(parseUrl(import.meta.url), () => {
     test("should have a hashed id", () => {
         expect(new Test(null, "a test", {}).id).toMatch(/^\w{8}$/);
@@ -24,6 +36,8 @@ describe(parseUrl(import.meta.url), () => {
     });
 
     test("run is async and lazily formatted", () => {
+        const restoreHighlighting = disableHighlighting();
+
         const testName = "some test";
         const t = new Test(null, testName, {});
         const runFn = () => {
@@ -31,23 +45,26 @@ describe(parseUrl(import.meta.url), () => {
             expect(1).toBe(1);
         };
 
-        const formatted = `
-test("${testName}", () => {
-    // Synchronous
-    expect(1).toBe(1);
-});`.trim();
-
         expect(t.run).toBe(null);
         expect(t.runFnString).toBe("");
-        expect(t.formattedCode).toBe("");
+        expect(t.formatted).toBe(false);
 
         t.setRunFn(runFn);
 
         expect(t.run()).toBeInstanceOf(Promise);
         expect(t.runFnString).toBe(runFn.toString());
-        expect(t.formattedCode).toBe("");
+        expect(t.formatted).toBe(false);
 
-        expect(t.code).toBe(formatted);
-        expect(t.formattedCode).toBe(formatted);
+        expect(String(t.code)).toBe(
+            `
+test("${testName}", () => {
+    // Synchronous
+    expect(1).toBe(1);
+});
+`.trim()
+        );
+        expect(t.formatted).toBe(true);
+
+        restoreHighlighting();
     });
 });

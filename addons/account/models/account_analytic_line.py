@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import ValidationError
 
 class AccountAnalyticLine(models.Model):
     _inherit = 'account.analytic.line'
@@ -39,7 +39,6 @@ class AccountAnalyticLine(models.Model):
         ondelete='cascade',
         index=True,
         check_company=True,
-        readonly=True,
     )
     code = fields.Char(size=8)
     ref = fields.Char(string='Ref.')
@@ -56,7 +55,7 @@ class AccountAnalyticLine(models.Model):
             if line.move_line_id and line.general_account_id != line.move_line_id.account_id:
                 raise ValidationError(_('The journal item is not linked to the correct financial account'))
 
-    @api.depends('move_line_id')
+    @api.depends('move_line_id.partner_id')
     def _compute_partner_id(self):
         for line in self:
             line.partner_id = line.move_line_id.partner_id or line.partner_id
@@ -80,17 +79,6 @@ class AccountAnalyticLine(models.Model):
         self.general_account_id = account
         self.product_uom_id = unit
 
-    def write(self, vals):
-        if self.move_line_id and any(field != 'ref' for field in vals):
-            raise UserError(self.env._("This analytic item was created by a journal item. Please edit the analytic distribution on the journal item instead."))
-
-        return super().write(vals)
-
-    @api.ondelete(at_uninstall=False)
-    def _unlink_except_move_line_related(self):
-        if not self._context.get('force_analytic_line_delete') and self.move_line_id:
-            raise UserError(self.env._("This analytic item was created by a journal item. Please edit the analytic distribution on the journal item instead."))
-
     @api.model
     def view_header_get(self, view_id, view_type):
         if self.env.context.get('account_id'):
@@ -99,3 +87,23 @@ class AccountAnalyticLine(models.Model):
                 account=self.env['account.analytic.account'].browse(self.env.context['account_id']).name
             )
         return super().view_header_get(view_id, view_type)
+
+    def create(self, vals):
+        analytic_lines = super().create(vals)
+        analytic_lines.move_line_id._update_analytic_distribution()
+        return analytic_lines
+
+    def write(self, vals):
+        affected_move_lines = self.move_line_id
+        res = super().write(vals)
+        if any(field in vals for field in ['amount', 'move_line_id'] + self._get_plan_fnames()):
+            if 'move_line_id' in vals:
+                affected_move_lines |= self.move_line_id
+            affected_move_lines._update_analytic_distribution()
+        return res
+
+    def unlink(self):
+        affected_move_lines = self.move_line_id
+        res = super().unlink()
+        affected_move_lines._update_analytic_distribution()
+        return res

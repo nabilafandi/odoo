@@ -21,6 +21,8 @@ class IrActionsReport(models.Model):
         orders = self.env['sale.order'].browse(res_ids)
 
         for order in orders:
+            if order.id not in result or 'stream' not in result[order.id]:
+                continue
             initial_stream = result[order.id]['stream']
             if initial_stream:
                 quotation_documents = order.quotation_document_ids
@@ -142,12 +144,12 @@ class IrActionsReport(models.Model):
                     formatted_value_ = format_amount(
                         self.env, value_, currency_id_ or order.currency_id
                     )
-                elif not value_:
+                elif not value_ and field_type_ not in {'integer', 'float'}:
                     formatted_value_ = ''
                 elif field_type_ == 'date':
                     formatted_value_ = format_date(self.env, value_)
                 elif field_type_ == 'datetime':
-                    formatted_value_ = format_datetime(self.env, value_, tz=tz)
+                    formatted_value_ = format_datetime(self.env, value_, tz=tz, dt_format=False)
                 elif field_type_ == 'selection' and value_:
                     formatted_value_ = dict(field_._description_selection(self.env))[value_]
                 elif field_type_ in {'one2many', 'many2one', 'many2many'}:

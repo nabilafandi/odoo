@@ -1,6 +1,6 @@
-import { afterEach, expect, test } from "@odoo/hoot";
+import { expect, test } from "@odoo/hoot";
 import { queryAllTexts } from "@odoo/hoot-dom";
-import { Deferred, animationFrame, mockDate, runAllTimers } from "@odoo/hoot-mock";
+import { Deferred, animationFrame, mockDate } from "@odoo/hoot-mock";
 import { onRendered } from "@odoo/owl";
 import {
     contains,
@@ -28,9 +28,9 @@ import {
     checkDatasets,
     checkLabels,
     checkLegend,
-    checkYTicks,
     checkModeIs,
     checkTooltip,
+    checkYTicks,
     clickOnDataset,
     clickOnLegend,
     clickSort,
@@ -42,6 +42,7 @@ import {
     getScaleY,
     getYAxisLabel,
     selectMode,
+    setupChartJsForTests,
 } from "./graph_test_helpers";
 
 import { DEFAULT_BG, getBorderWhite, getColors, lightenColor } from "@web/core/colors/colors";
@@ -49,6 +50,7 @@ import { Domain } from "@web/core/domain";
 import { registry } from "@web/core/registry";
 import { SampleServer } from "@web/model/sample_server";
 import { GraphArchParser } from "@web/views/graph/graph_arch_parser";
+import { GraphModel } from "@web/views/graph/graph_model";
 import { GraphRenderer } from "@web/views/graph/graph_renderer";
 import { graphView } from "@web/views/graph/graph_view";
 import { WebClient } from "@web/webclient/webclient";
@@ -156,7 +158,6 @@ class Foo extends models.Model {
         },
     ];
     _views = {
-        graph: /* xml */ `<graph />`,
         search: /* xml */ `
             <search>
                 <filter name="false_domain" string="False Domain" domain="[(0, '=', 1)]" />
@@ -174,7 +175,16 @@ class Foo extends models.Model {
 
 defineModels([Foo, Color, Product]);
 
-afterEach(runAllTimers);
+setupChartJsForTests();
+
+test('graph view with "class" attribute', async () => {
+    await mountView({
+        type: "graph",
+        resModel: "foo",
+        arch: `<graph class="foobar-class"/>`,
+    });
+    expect(".o_graph_view").toHaveClass("foobar-class");
+});
 
 test("simple bar chart rendering", async () => {
     const view = await mountView({ type: "graph", resModel: "foo" });
@@ -2777,7 +2787,8 @@ test("not use a many2one as a measure by default", async () => {
     expect(queryAllTexts(".o-dropdown--menu .o_menu_item")).toEqual(["Foo", "Revenue", "Count"]);
 });
 
-test.tags("desktop")("graph view crash when moving from search view using Down key", async () => {
+test.tags("desktop");
+test("graph view crash when moving from search view using Down key", async () => {
     await mountView({ type: "graph", resModel: "foo" });
 
     await contains(".o_searchview input").press("ArrowDown");
@@ -3384,7 +3395,8 @@ test("empty graph view without sample data after filter", async () => {
     expect(".o_view_nocontent").toHaveCount(1);
 });
 
-test.tags("desktop")("reload chart with switchView button keep internal state", async () => {
+test.tags("desktop");
+test("reload chart with switchView button keep internal state", async () => {
     Foo._views.list = /* xml */ `<list />`;
 
     await mountWithCleanup(WebClient);
@@ -4020,4 +4032,66 @@ test("missing deleted property field definition is created", async function () {
             },
         ]
     );
+});
+
+test("limit dataset amount", async () => {
+    class Project extends models.Model {
+        id = fields.Integer();
+        name = fields.Char();
+    }
+    class Stage extends models.Model {
+        id = fields.Integer();
+        name = fields.Char();
+    }
+    class Task extends models.Model {
+        id = fields.Integer();
+        name = fields.Char();
+        project_id = fields.Many2one({ relation: "project" });
+        stage_id = fields.Many2one({ relation: "stage" });
+    }
+    defineModels([Project, Stage, Task]);
+
+    for (let i = 1; i <= 600; i++) {
+        Project._records.push({
+            id: i,
+            name: `Project ${i}`,
+        });
+        Stage._records.push({
+            id: i,
+            name: `Stage ${i}`,
+        });
+        Task._records.push({
+            id: i,
+            project_id: i,
+            stage_id: i,
+            name: `Task ${i}`,
+        });
+    }
+
+    const view = await mountView({
+        type: "graph",
+        resModel: "task",
+        arch: `
+            <graph>
+                <field name="project_id"/>
+                <field name="stage_id"/>
+            </graph>
+        `,
+    });
+    const model = getGraphModel(view);
+    expect(model.data.exceeds).toBe(true);
+    expect(model.data.datasets).toHaveLength(80);
+    expect(model.data.labels).toHaveLength(80);
+    expect(`.o_graph_alert`).toHaveCount(1);
+
+    patchWithCleanup(GraphModel.prototype, {
+        notify() {
+            expect.step("rerender");
+        },
+    });
+    await contains(`.o_graph_load_all_btn`).click();
+    expect.verifySteps(["rerender"]);
+    expect(model.data.exceeds).toBe(false);
+    expect(model.data.datasets).toHaveLength(600);
+    expect(model.data.labels).toHaveLength(600);
 });

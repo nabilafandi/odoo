@@ -1,7 +1,9 @@
 import json
 from contextlib import contextmanager
-from requests import Session, PreparedRequest, Response
+from urllib.parse import parse_qs, quote_plus
+
 from psycopg2 import IntegrityError
+from requests import PreparedRequest, Response, Session
 
 from odoo.exceptions import ValidationError, UserError
 from odoo.tests.common import tagged, TransactionCase, freeze_time
@@ -45,21 +47,39 @@ class TestPeppolParticipant(TransactionCase):
                     'migration_key': 'test_key',
                 }
             },
+            '/api/peppol/1/register_sender': {'result': {}},
+            '/api/peppol/1/register_sender_as_receiver': {'result': {}},
         }
 
     @classmethod
     def _request_handler(cls, s: Session, r: PreparedRequest, /, **kw):
         response = Response()
         response.status_code = 200
-        if r.url.endswith('/iso6523-actorid-upis%3A%3A9925%3A0000000000'):
-            response.status_code = 404
+        url = r.path_url.lower()
+        # mock SMP participant lookup: 200 if pid in SMP_OK_IDS, else 404
+        if r.path_url.startswith('/api/peppol/1/lookup'):
+            peppol_identifier = parse_qs(r.path_url.rsplit('?')[1])['peppol_identifier'][0]
+            if peppol_identifier == "0208:0239843188":
+                response.json = lambda: {
+                    "result": {
+                        "identifier": peppol_identifier,
+                        "smp_base_url": "http://example.com/smp",
+                        "ttl": 60,
+                        "service_group_url": "http://example.com/smp/iso6523-actorid-upis%3A%3A" + quote_plus(peppol_identifier),
+                        "services": []
+                    }
+                }
+            else:
+                response.status_code = 404
+                response.json = lambda: {
+                    "error": {
+                        "code": "NOT_FOUND",
+                        "message": "no naptr record",
+                        "retryable": False,
+                    },
+                }
             return response
 
-        if r.url.endswith('/iso6523-actorid-upis%3A%3A0208%3A0000000000'):
-            response._content = b'<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n<smp:ServiceGroup xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:id="http://busdox.org/transport/identifiers/1.0/" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:smp="http://busdox.org/serviceMetadata/publishing/1.0/"><id:ParticipantIdentifier scheme="iso6523-actorid-upis">0208:0000000000</id:ParticipantIdentifier></smp:ServiceGroup>'
-            return response
-
-        url = r.path_url
         body = json.loads(r.body)
         responses = cls._get_mock_responses()
         if (
@@ -88,7 +108,7 @@ class TestPeppolParticipant(TransactionCase):
     def _get_participant_vals(self):
         return {
             'peppol_eas': '9925',
-            'peppol_endpoint': '0000000000',
+            'peppol_endpoint': 'BE0239843188',
             'phone_number': '+32483123456',
             'contact_email': 'yourcompany@test.example.com',
         }
@@ -99,6 +119,22 @@ class TestPeppolParticipant(TransactionCase):
         self.env.context = dict(previous_context, **other_context)
         yield self
         self.env.context = previous_context
+
+    def test_ignore_archived_edi_users(self):
+        wizard = self.env['peppol.registration'].create(self._get_participant_vals())
+        wizard.button_peppol_sender_registration()
+
+        self.env['account_edi_proxy_client.user'].create([{
+            'active': False,
+            'id_client': f'client-demo',
+            'company_id': self.env.company.id,
+            'edi_identification': f'client-demo',
+            'private_key_id': self.env['certificate.key'].sudo()._generate_rsa_private_key(self.env.company).id,
+            'refresh_token': False,
+            'proxy_type': 'peppol',
+            'edi_mode': 'demo',
+        }])
+        self.env.company.with_context(active_test=False).partner_id.button_account_peppol_check_partner_endpoint()
 
     def test_create_participant_missing_data(self):
         # creating a participant without eas/endpoint/document should not be possible
@@ -111,14 +147,10 @@ class TestPeppolParticipant(TransactionCase):
 
     def test_create_participant_already_exists(self):
         # creating a receiver participant that already exists on Peppol network should not be possible
-        vals = self._get_participant_vals()
-        vals['peppol_eas'] = '0208'
+        vals = {**self._get_participant_vals(), 'peppol_eas': '0208', 'peppol_endpoint': '0239843188'}
         wizard = self.env['peppol.registration'].create(vals)
-        wizard.smp_registration = True
-        with self.assertRaises(UserError), self.cr.savepoint():
-            wizard.button_peppol_sender_registration()
-            wizard.verification_code = '123456'
-            wizard.button_check_peppol_verification_code()
+        self.assertFalse(wizard.smp_registration)
+        wizard.button_register_peppol_participant()
 
     def test_create_success_sender(self):
         # should be possible to apply with all data
@@ -126,12 +158,8 @@ class TestPeppolParticipant(TransactionCase):
         # then the account_peppol_proxy_state should not change
         # after running the cron checking participant status
         company = self.env.company
-        wizard = self.env['peppol.registration'].create(self._get_participant_vals())
+        wizard = self.env['peppol.registration'].create({'smp_registration': False, **self._get_participant_vals()})
         wizard.button_peppol_sender_registration()
-        # should send verification code immediately
-        self.assertEqual(company.account_peppol_proxy_state, 'in_verification')
-        wizard.verification_code = '123456'
-        wizard.button_check_peppol_verification_code()
         # since we did not select receiver registration, we're now just a sender
         self.assertEqual(company.account_peppol_proxy_state, 'sender')
         # running the cron should not do anything for the company
@@ -148,10 +176,6 @@ class TestPeppolParticipant(TransactionCase):
         wizard = self.env['peppol.registration'].create(self._get_participant_vals())
         wizard.smp_registration = True  # choose to register as a receiver right away
         wizard.button_peppol_sender_registration()
-        # should send verification code immediately
-        self.assertEqual(company.account_peppol_proxy_state, 'in_verification')
-        wizard.verification_code = '123456'
-        wizard.button_check_peppol_verification_code()
         self.assertEqual(company.account_peppol_proxy_state, 'smp_registration')
         with self._set_context({'participant_state': 'receiver'}):
             self.env['account_edi_proxy_client.user']._cron_peppol_get_participant_status()
@@ -162,7 +186,7 @@ class TestPeppolParticipant(TransactionCase):
         # and then come back to settings and register as a receiver
         # first step: use the peppol wizard to register only as a sender
         company = self.env.company
-        wizard = self.env['peppol.registration'].create(self._get_participant_vals())
+        wizard = self.env['peppol.registration'].create({'smp_registration': False, **self._get_participant_vals()})
         wizard.button_peppol_sender_registration()
         wizard.verification_code = '123456'
         wizard.button_check_peppol_verification_code()
@@ -211,37 +235,3 @@ class TestPeppolParticipant(TransactionCase):
             wizard.button_check_peppol_verification_code()
             self.assertEqual(self.env.company.account_peppol_proxy_state, 'smp_registration')
             self.assertFalse(self.env.company.account_peppol_migration_key)  # the key should be reset once we've used it
-
-    def test_migrate_away_participant(self):
-        # a participant should be able to request a migration key
-        wizard = self.env['peppol.registration'].create(self._get_participant_vals())
-        self.assertFalse(wizard.account_peppol_migration_key)
-        wizard.button_peppol_sender_registration()
-        wizard.account_peppol_proxy_state = 'receiver'
-        # migrating away is only possible in the settings
-        settings = self.env['res.config.settings'].create({})
-        settings.button_migrate_peppol_registration()
-        self.assertEqual(settings.company_id.account_peppol_proxy_state, 'receiver')
-        self.assertEqual(settings.account_peppol_migration_key, 'test_key')
-
-    def test_reset_participant(self):
-        # once a participant has migrated away, they should be reset
-        wizard = self.env['peppol.registration'].create(self._get_participant_vals())
-        wizard.button_peppol_sender_registration()
-        wizard.account_peppol_proxy_state = 'receiver'
-        settings = self.env['res.config.settings'].create({})
-        settings.button_migrate_peppol_registration()
-
-        with self._set_context({'migrated_away': True}):
-            try:
-                settings.button_update_peppol_user_data()
-            except UserError:
-                settings = self.env['res.config.settings'].create({})
-                self.assertRecordValues(settings, [{
-                        'account_peppol_migration_key': False,
-                        'account_peppol_proxy_state': 'not_registered',
-                    }],
-                )
-                self.assertFalse(self.env.company.account_edi_proxy_client_ids.filtered(lambda u: u.proxy_type == 'peppol'))
-            else:
-                raise ValidationError('A UserError should be raised.')

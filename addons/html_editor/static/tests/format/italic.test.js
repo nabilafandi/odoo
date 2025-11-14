@@ -1,8 +1,18 @@
 import { expect, test } from "@odoo/hoot";
+import { press } from "@odoo/hoot-dom";
+import { patchWithCleanup } from "@web/../tests/web_test_helpers";
 import { setupEditor, testEditor } from "../_helpers/editor";
 import { getContent } from "../_helpers/selection";
 import { em, span } from "../_helpers/tags";
-import { italic, tripleClick } from "../_helpers/user_actions";
+import {
+    italic,
+    tripleClick,
+    simulateArrowKeyPress,
+    insertText,
+    undo,
+} from "../_helpers/user_actions";
+import { unformat } from "../_helpers/format";
+import { tick } from "@odoo/hoot-mock";
 
 test("should make a few characters italic", async () => {
     await testEditor({
@@ -47,16 +57,23 @@ test("should make qweb tag italic", async () => {
 test("should make a whole heading italic after a triple click", async () => {
     await testEditor({
         contentBefore: `<h1>[ab</h1><p>]cd</p>`,
-        stepFunction: italic,
+        stepFunction: async (editor) => {
+            await tripleClick(editor.editable.querySelector("h1"));
+            italic(editor);
+        },
         contentAfter: `<h1>${em(`[ab]`)}</h1><p>cd</p>`,
     });
 });
 
 test("should make a whole heading not italic after a triple click", async () => {
-    const { el, editor } = await setupEditor(`<h1>${em(`[ab`)}</h1><p>]cd</p>`);
-    await tripleClick(el.querySelector("h1"));
-    italic(editor);
-    expect(getContent(el)).toBe(`<h1>[ab]</h1><p>cd</p>`);
+    await testEditor({
+        contentBefore: `<h1>${em(`[ab`)}</h1><p>]cd</p>`,
+        stepFunction: async (editor) => {
+            await tripleClick(editor.editable.querySelector("h1"));
+            italic(editor);
+        },
+        contentAfter: `<h1>[ab]</h1><p>cd</p>`,
+    });
 });
 
 test("should make a selection starting with italic text fully italic", async () => {
@@ -107,4 +124,80 @@ test("should not format non-editable text (italic)", async () => {
         stepFunction: italic,
         contentAfter: `<p>${em("[a")}</p><p contenteditable="false">b</p><p>${em("c]")}</p>`,
     });
+});
+
+test("should remove empty italic tag when changing selection", async () => {
+    const { editor, el } = await setupEditor("<p>ab[]cd</p>");
+
+    italic(editor);
+    await tick();
+    expect(getContent(el)).toBe(`<p>ab${em("[]\u200B", "first")}cd</p>`);
+
+    await simulateArrowKeyPress(editor, "ArrowLeft");
+    await tick(); // await selectionchange
+    expect(getContent(el)).toBe(`<p>a[]bcd</p>`);
+});
+
+test("should make a few characters italic inside table (italic)", async () => {
+    await testEditor({
+        contentBefore: unformat(`
+            <table class="table table-bordered o_table o_selected_table">
+                <tbody>
+                    <tr>
+                        <td class="o_selected_td"><p>[abc</p></td>
+                        <td><p><br></p></td>
+                        <td><p><br></p></td>
+                    </tr>
+                    <tr>
+                        <td class="o_selected_td"><p>def</p></td>
+                        <td><p><br></p></td>
+                        <td><p><br></p></td>
+                    </tr>
+                    <tr>
+                        <td class="o_selected_td"><p>]<br></p></td>
+                        <td><p><br></p></td>
+                        <td><p><br></p></td>
+                    </tr>
+                </tbody>
+            </table>`),
+        stepFunction: italic,
+        contentAfterEdit: unformat(`
+            <table class="table table-bordered o_table o_selected_table">
+                <tbody>
+                    <tr>
+                        <td class="o_selected_td"><p>${em(`[abc`)}</p></td>
+                        <td><p><br></p></td>
+                        <td><p><br></p></td>
+                    </tr>
+                    <tr>
+                        <td class="o_selected_td"><p>${em(`def`)}</p></td>
+                        <td><p><br></p></td>
+                        <td><p><br></p></td>
+                    </tr>
+                    <tr>
+                        <td class="o_selected_td"><p>${em(`]<br>`)}</p></td>
+                        <td><p><br></p></td>
+                        <td><p><br></p></td>
+                    </tr>
+                </tbody>
+            </table>`),
+    });
+});
+
+test("should not add history step for italic on collapsed selection", async () => {
+    const { editor, el } = await setupEditor("<p>abcd[]</p>");
+
+    patchWithCleanup(console, { warn: () => {} });
+
+    // Collapsed formatting shortcuts (e.g. Ctrl+I) shouldn’t create a history
+    // step. The empty inline tag is temporary: auto-cleaned if unused. We want
+    // to avoid having a phantom step in the history.
+    await press(["ctrl", "i"]);
+    expect(getContent(el)).toBe(`<p>abcd${em("[]\u200B", "first")}</p>`);
+
+    await insertText(editor, "A");
+    expect(getContent(el)).toBe(`<p>abcd${em("A[]")}</p>`);
+
+    undo(editor);
+    expect(getContent(el)).toBe(`<p>abcd[]</p>`);
 });

@@ -67,7 +67,7 @@ export class MassMailingHtmlField extends HtmlField {
         });
 
         useRecordObserver((record) => {
-            if ("mailing_model_id" in record.data) {
+            if (record.data.mailing_model_id) {
                 this._onModelChange(record);
             }
         });
@@ -213,7 +213,7 @@ export class MassMailingHtmlField extends HtmlField {
      * @private
      */
     _updateIframe() {
-        const iframe = this.wysiwyg.$iframe[0];
+        const iframe = this.wysiwyg?.$iframe?.[0];
         if (!iframe || !iframe.contentDocument) {
             return;
         }
@@ -277,7 +277,17 @@ export class MassMailingHtmlField extends HtmlField {
         const sidebar = document.querySelector("#oe_snippets");
         if (!sidebar) {
             return;
-        } else if (!this._isFullScreen()) {
+        } else if (this._isFullScreen()) {
+            sidebar.style.height = "";
+            sidebar.style.top = "0";
+        } else if (this.env.inDialog) {
+            const scrollableY = closestScrollableY(sidebar);
+            if (scrollableY) {
+                const rect = scrollableY.getBoundingClientRect();
+                sidebar.style.height = `${rect.height}px`;
+                sidebar.style.top = "0";
+            }
+        } else {
             const scrollableY = closestScrollableY(sidebar);
             const top = scrollableY
                 ? `${-1 * (parseInt(getComputedStyle(scrollableY).paddingTop) || 0)}px`
@@ -286,9 +296,6 @@ export class MassMailingHtmlField extends HtmlField {
             const offsetHeight = window.innerHeight - document.querySelector(".o_content").getBoundingClientRect().y;
             sidebar.style.height = `${Math.min(maxHeight, offsetHeight)}px`;
             sidebar.style.top = top;
-        } else {
-            sidebar.style.height = "";
-            sidebar.style.top = "0";
         }
     }
 
@@ -446,8 +453,6 @@ export class MassMailingHtmlField extends HtmlField {
 
             const isSnippetsFolded = uiUtils.isSmall() || themeName === 'basic';
             this.wysiwyg.setSnippetsMenuFolded(isSnippetsFolded);
-            // Inform the iframe content of the snippets menu visibility
-            this.wysiwyg.$iframeBody.closest('body').toggleClass("has_snippets_sidebar", !isSnippetsFolded);
 
             const $editable = this.wysiwyg.$editable.find('.o_editable');
             this.$editorMessageElements = $editable
@@ -527,7 +532,7 @@ export class MassMailingHtmlField extends HtmlField {
             $themeSelectorNew.appendTo(this.wysiwyg.$iframeBody);
         }
 
-        if (this.env.mailingFilterTemplates && this.wysiwyg) {
+        if (this.wysiwyg) {
             this._hideIrrelevantTemplates(this.props.record);
         }
         this.wysiwyg.odooEditor.activateContenteditable();
@@ -726,6 +731,30 @@ export class MassMailingHtmlField extends HtmlField {
             this.props.record.data[this.props.name] = this.props.record.data.body_html;
         }
         await super._setupReadonlyIframe();
+
+        const iframeTarget = this.sandboxedPreview
+            ? this.iframeRef.el.contentDocument.documentElement
+            : this.iframeRef.el.contentDocument.querySelector("#iframe_target");
+        this._fixInlineDynamicPlaceholders(iframeTarget);
+    }
+    _fixInlineDynamicPlaceholders(iframe) {
+        // Add data-oe-t-inline attribute to t elements whose contents are inline
+        const checkAllInline = (el) =>
+            [...el.children].every((child) => {
+                if (child.tagName === "T") {
+                    return checkAllInline(child);
+                } else {
+                    return (
+                        child.nodeType !== Node.ELEMENT_NODE ||
+                        iframe.contentWindow.getComputedStyle(child).display === "inline"
+                    );
+                }
+            });
+        for (const tElement of iframe.querySelectorAll("t")) {
+            if (checkAllInline(tElement)) {
+                tElement.setAttribute("data-oe-t-inline", "true");
+            }
+        }
     }
     async _lazyloadWysiwyg() {
         await super._lazyloadWysiwyg(...arguments);

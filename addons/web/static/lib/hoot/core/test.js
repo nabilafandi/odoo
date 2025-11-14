@@ -1,6 +1,6 @@
 /** @odoo-module */
 
-import { reactive } from "@odoo/owl";
+import { markup, reactive } from "@odoo/owl";
 import { HootError, stringify } from "../hoot_utils";
 import { Job } from "./job";
 import { Tag } from "./tag";
@@ -10,6 +10,25 @@ import { Tag } from "./tag";
  * @typedef {T | PromiseLike<T>} MaybePromise
  */
 
+//-----------------------------------------------------------------------------
+// Global
+//-----------------------------------------------------------------------------
+
+const {
+    Object: { freeze: $freeze },
+} = globalThis;
+
+//-----------------------------------------------------------------------------
+// Internal
+//-----------------------------------------------------------------------------
+
+const SHARED_LOGS = $freeze({});
+const SHARED_RESULTS = $freeze([]);
+
+//-----------------------------------------------------------------------------
+// Exports
+//-----------------------------------------------------------------------------
+
 /**
  * @param {Pick<Test, "name" | "parent">} test
  * @returns {HootError}
@@ -17,7 +36,8 @@ import { Tag } from "./tag";
 export function testError({ name, parent }, ...message) {
     const parentString = parent ? ` (in suite ${stringify(parent.name)})` : "";
     return new HootError(
-        `error while registering test ${stringify(name)}${parentString}: ${message.join("\n")}`
+        `error while registering test ${stringify(name)}${parentString}: ${message.join("\n")}`,
+        { level: "critical" }
     );
 }
 
@@ -27,46 +47,54 @@ export class Test extends Job {
     static FAILED = 2;
     static ABORTED = 3;
 
-    formattedCode = "";
+    formatted = false;
     logs = reactive({
         error: 0,
         warn: 0,
     });
-    /** @type {import("./expect").TestResult[]} */
+    /** @type {import("./expect").CaseResult[]} */
     results = reactive([]);
     /** @type {() => MaybePromise<void> | null} */
     run = null;
-    /** @type {string} */
     runFnString = "";
     status = Test.SKIPPED;
 
     get code() {
-        if (!this.formattedCode) {
-            this.formattedCode = this.formatFunctionSource();
+        if (!this.formatted) {
+            this.formatted = true;
+            this.runFnString = this.formatFunctionSource(this.runFnString);
+            if (window.Prism) {
+                const highlighted = window.Prism.highlight(
+                    this.runFnString,
+                    Prism.languages.javascript,
+                    "javascript"
+                );
+                this.runFnString = markup(highlighted);
+            }
         }
-        return this.formattedCode;
+        return this.runFnString;
     }
 
-    /** @returns {typeof Test["prototype"]["results"][number]} */
+    get duration() {
+        return this.results.reduce((acc, result) => acc + result.duration, 0);
+    }
+
+    /** @returns {import("./expect").CaseResult | null} */
     get lastResults() {
         return this.results.at(-1);
     }
 
-    /**
-     * @param {() => MaybePromise<void>} fn
-     */
-    setRunFn(fn) {
-        this.run = fn ? async () => fn() : null;
-        if (fn) {
-            this.runFnString = fn.toString();
-        }
+    cleanup() {
+        this.run = null;
     }
 
-    formatFunctionSource() {
-        let stringFn = this.runFnString;
+    /**
+     * @param {string} stringFn
+     */
+    formatFunctionSource(stringFn) {
+        let modifiers = "";
+        let startingLine = 0;
         if (this.name) {
-            let prefix = "";
-            const tags = [];
             for (const tag of this.tags) {
                 if (this.parent.tags.includes(tag)) {
                     continue;
@@ -76,25 +104,20 @@ export class Test extends Job {
                     case Tag.DEBUG:
                     case Tag.SKIP:
                     case Tag.ONLY: {
-                        prefix += `.${tag.key}`;
+                        modifiers += `.${tag.key}`;
                         break;
-                    }
-                    default: {
-                        tags.push(stringify(tag.name));
                     }
                 }
             }
-            if (tags.length) {
-                prefix += `.tags(${tags.join(", ")})`;
-            }
 
-            stringFn = `test${prefix}(${stringify(this.name)}, ${stringFn});`;
+            startingLine++;
+            stringFn = `test${modifiers}(${stringify(this.name)}, ${stringFn});`;
         }
 
         const lines = stringFn.split("\n");
 
         let toTrim = null;
-        for (let i = 1; i < lines.length; i++) {
+        for (let i = startingLine; i < lines.length; i++) {
             if (!lines[i].trim()) {
                 continue;
             }
@@ -104,11 +127,35 @@ export class Test extends Job {
             }
         }
         if (toTrim) {
-            for (let i = 1; i < lines.length; i++) {
+            for (let i = startingLine; i < lines.length; i++) {
                 lines[i] = lines[i].slice(toTrim);
             }
         }
 
         return lines.join("\n");
+    }
+
+    minimize() {
+        super.minimize();
+
+        this.setRunFn(null);
+        this.runFnString = "";
+        this.logs = SHARED_LOGS;
+        this.results = SHARED_RESULTS;
+    }
+
+    reset() {
+        this.run = this.run.bind(this);
+    }
+
+    /**
+     * @param {() => MaybePromise<void>} fn
+     */
+    setRunFn(fn) {
+        this.run = fn ? async () => fn() : null;
+        if (fn) {
+            this.formatted = false;
+            this.runFnString = fn.toString();
+        }
     }
 }

@@ -1,7 +1,6 @@
 /** @odoo-module */
 
-import { describe, expect, test } from "@odoo/hoot";
-import { mockSendBeacon, mockTouch, mockVibrate } from "@odoo/hoot-mock";
+import { describe, expect, mockSendBeacon, mockTouch, mockVibrate, test } from "@odoo/hoot";
 import { parseUrl } from "../local_helpers";
 
 /**
@@ -15,7 +14,8 @@ const ensureResolvesImmediatly = (promise) =>
 
 describe(parseUrl(import.meta.url), () => {
     describe("clipboard", () => {
-        test.tags("secure")("read/write calls are resolved immediatly", async () => {
+        test.tags("secure");
+        test("read/write calls are resolved immediatly", async () => {
             navigator.clipboard.write([
                 new ClipboardItem({
                     "text/plain": new Blob(["some text"], { type: "text/plain" }),

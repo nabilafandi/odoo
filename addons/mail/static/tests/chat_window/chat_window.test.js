@@ -25,6 +25,7 @@ import {
     Command,
     getService,
     patchWithCleanup,
+    preloadBundle,
     serverState,
     withUser,
 } from "@web/../tests/web_test_helpers";
@@ -34,6 +35,7 @@ import { rpc } from "@web/core/network/rpc";
 
 describe.current.tags("desktop");
 defineMailModels();
+preloadBundle("web.assets_emoji");
 
 test("Mobile: chat window shouldn't open automatically after receiving a new message", async () => {
     const pyEnv = await startServer();
@@ -176,14 +178,15 @@ test("chat window: basic rendering", async () => {
     await contains(".o-mail-ChatWindow");
     await contains(".o-mail-ChatWindow-header", { text: "General" });
     await contains(".o-mail-ChatWindow-header .o-mail-ChatWindow-threadAvatar");
-    await contains(".o-mail-ChatWindow-command", { count: 4 });
+    await contains(".o-mail-ChatWindow-command", { count: 5 });
     await contains("[title='Start a Call']");
+    await contains("[title='Start a Video Call']");
     await contains("[title='Open Actions Menu']");
     await contains("[title='Fold']");
     await contains("[title*='Close Chat Window']");
     await contains(".o-mail-ChatWindow .o-mail-Thread", { text: "The conversation is empty." });
     await click("[title='Open Actions Menu']");
-    await contains(".o-mail-ChatWindow-command", { count: 14 });
+    await contains(".o-mail-ChatWindow-command", { count: 15 });
     await contains(".o-dropdown-item", { text: "Attachments" });
     await contains(".o-dropdown-item", { text: "Pinned Messages" });
     await contains(".o-dropdown-item", { text: "Members" });
@@ -202,18 +205,18 @@ test.skip("Fold state of chat window is sync among browser tabs", async () => {
     pyEnv["discuss.channel"].create({ name: "General" });
     const env1 = await start({ asTab: true });
     const env2 = await start({ asTab: true });
-    await click(".o_menu_systray i[aria-label='Messages']", { target: env1 });
-    await click(".o-mail-NotificationItem", { target: env1 });
-    await contains(".o-mail-ChatWindow-header", { target: env2 });
-    await click(".o-mail-ChatWindow-header", { target: env1 }); // Fold
-    await contains(".o-mail-Thread", { count: 0, target: env1 });
-    await contains(".o-mail-Thread", { count: 0, target: env2 });
-    await click(".o-mail-ChatBubble", { target: env2 }); // Unfold
-    await contains(".o-mail-ChatWindow .o-mail-Thread", { target: env1 });
-    await contains(".o-mail-ChatWindow .o-mail-Thread", { target: env2 });
-    await click("[title*='Close Chat Window']", { target: env1 });
-    await contains(".o-mail-ChatWindow", { count: 0, target: env1 });
-    await contains(".o-mail-ChatWindow", { count: 0, target: env2 });
+    await click(`${env1.selector} .o_menu_systray i[aria-label='Messages']`);
+    await click(`${env1.selector} .o-mail-NotificationItem`);
+    await contains(`${env2.selector} .o-mail-ChatWindow-header`);
+    await click(`${env1.selector} .o-mail-ChatWindow-header`); // Fold
+    await contains(`${env1.selector} .o-mail-Thread`, { count: 0 });
+    await contains(`${env2.selector} .o-mail-Thread`, { count: 0 });
+    await click(`${env2.selector} .o-mail-ChatBubble`); // Unfold
+    await contains(`${env1.selector} .o-mail-ChatWindow .o-mail-Thread`);
+    await contains(`${env2.selector} .o-mail-ChatWindow .o-mail-Thread`);
+    await click(`${env1.selector} [title*='Close Chat Window']`);
+    await contains(`${env1.selector} .o-mail-ChatWindow`, { count: 0 });
+    await contains(`${env2.selector} .o-mail-ChatWindow`, { count: 0 });
 });
 
 test("Mobile: opening a chat window should not update channel state on the server", async () => {
@@ -457,7 +460,8 @@ test("ESC cancels thread rename", async () => {
     await contains(".o-mail-ChatWindow-command", { text: "General" });
 });
 
-test.tags("focus required")("open 2 different chat windows: enough screen width", async () => {
+test.tags("focus required");
+test("open 2 different chat windows: enough screen width", async () => {
     const pyEnv = await startServer();
     pyEnv["discuss.channel"].create([{ name: "Channel_1" }, { name: "Channel_2" }]);
     patchUiSize({ width: 1920 });
@@ -527,7 +531,8 @@ test("focus next visible chat window when closing current chat window with ESCAP
     });
 });
 
-test.tags("focus required")("chat window: switch on TAB", async () => {
+test.tags("focus required");
+test("chat window: switch on TAB", async () => {
     const pyEnv = await startServer();
     pyEnv["discuss.channel"].create([{ name: "channel1" }, { name: "channel2" }]);
     patchUiSize({ width: 1920 });
@@ -564,7 +569,8 @@ test.tags("focus required")("chat window: switch on TAB", async () => {
     });
 });
 
-test.tags("focus required")("chat window: TAB cycle with 3 open chat windows", async () => {
+test.tags("focus required");
+test("chat window: TAB cycle with 3 open chat windows", async () => {
     const pyEnv = await startServer();
     pyEnv["discuss.channel"].create([
         {
@@ -766,13 +772,14 @@ test("chat window: composer state conservation on toggle discuss", async () => {
     });
     // Set attachments of the composer
     await inputFiles(".o-mail-Composer-coreMain .o_input_file", [textFile1, textFile2]);
-    await contains(".o-mail-AttachmentCard .fa-check", { count: 2 });
+    await contains(".o-mail-AttachmentCard:not(.o-isUploading) .fa-check", { count: 2 });
     await openDiscuss();
     await contains(".o-mail-ChatWindow", { count: 0 });
     await openFormView("discuss.channel", channelId);
-    await contains(".o-mail-Composer-footer .o-mail-AttachmentList .o-mail-AttachmentCard", {
-        count: 2,
-    });
+    await contains(
+        ".o-mail-Composer-footer .o-mail-AttachmentList .o-mail-AttachmentCard:not(.o-isUploading)",
+        { count: 2 }
+    );
     await contains(".o-mail-Composer-input", { value: "XDU for the win !" });
 });
 
@@ -1069,4 +1076,76 @@ test("open channel in chat window from push notification", async () => {
         })
     );
     await contains(".o-mail-ChatWindow", { text: "General" });
+});
+
+test("Ctrl+k opens the command palette", async () => {
+    const pyEnv = await startServer();
+    pyEnv["discuss.channel"].create([
+        {
+            name: "General",
+            channel_member_ids: [
+                Command.create({ partner_id: serverState.partnerId, fold_state: "open" }),
+            ],
+        },
+    ]);
+    await start();
+    await focus(".o-mail-ChatWindow", { text: "General" });
+    triggerHotkey("control+k");
+    await contains(".o_command_palette");
+});
+
+test("Do not squash logged notes", async () => {
+    const pyEnv = await startServer();
+    const partnerId = pyEnv["res.partner"].create({ name: "TestPartner" });
+    const messageId = pyEnv["mail.message"].create([
+        {
+            model: "res.partner",
+            body: "Test Message",
+            author_id: partnerId,
+            needaction: true,
+            res_id: partnerId,
+        },
+        {
+            model: "res.partner",
+            body: "Message",
+            author_id: serverState.partnerId,
+            needaction: true,
+            res_id: partnerId,
+        },
+        {
+            model: "res.partner",
+            body: "Message Squashed",
+            author_id: serverState.partnerId,
+            needaction: true,
+            res_id: partnerId,
+        },
+        {
+            model: "res.partner",
+            body: "Hello",
+            author_id: serverState.partnerId,
+            needaction: true,
+            res_id: partnerId,
+            is_note: true,
+        },
+        {
+            model: "res.partner",
+            body: "World!",
+            author_id: serverState.partnerId,
+            needaction: true,
+            res_id: partnerId,
+            is_note: true,
+        },
+    ]);
+    pyEnv["mail.notification"].create({
+        mail_message_id: messageId[0],
+        notification_status: "sent",
+        notification_type: "inbox",
+        res_partner_id: serverState.partnerId,
+    });
+    await start();
+    await click(".o_menu_systray i[aria-label='Messages']");
+    await click(".o-mail-NotificationItem");
+    await contains(".o-mail-Message.o-squashed", { text: "Message Squashed" });
+    await contains(".o-mail-Message:not(.o-squashed)", { text: "Hello" });
+    await contains(".o-mail-Message:not(.o-squashed)", { text: "World!" });
 });

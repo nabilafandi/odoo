@@ -55,8 +55,7 @@ test("BinaryField is correctly rendered (readonly)", async () => {
             message: "we should download the correct data",
         });
 
-        const responseBody = new Blob([body.get("data")], { type: "text/plain" });
-        return new Response(responseBody, { status: 200 });
+        return new Blob([body.get("data")], { type: "text/plain" });
     });
 
     await mountView({
@@ -113,8 +112,7 @@ test("BinaryField is correctly rendered", async () => {
             message: "we should download the correct data",
         });
 
-        const responseBody = new Blob([body.get("data")], { type: "text/plain" });
-        return new Response(responseBody, { status: 200 });
+        return new Blob([body.get("data")], { type: "text/plain" });
     });
 
     await mountView({
@@ -288,7 +286,8 @@ test("option accepted_file_extensions", async () => {
     });
 });
 
-test.tags("desktop")("readonly in create mode does not download", async () => {
+test.tags("desktop");
+test("readonly in create mode does not download", async () => {
     onRpc("/web/content", () => {
         expect.step("We shouldn't be getting the file.");
     });
@@ -429,4 +428,23 @@ test("isUploading state should be set to false after upload", async () => {
     await animationFrame();
     expect.verifyErrors([/RPC_ERROR/]);
     expect(`.o_select_file_button`).toHaveText("Upload your file");
+});
+
+test("doesn't crash if value is not a string", async () => {
+    class Dummy extends models.Model {
+        document = fields.Binary()
+        _applyComputesAndValidate() {}
+    }
+    defineModels([Dummy])
+    Dummy._records.push({ id: 1, document: {} });
+    await mountView({
+        type: "form",
+        resModel: "dummy",
+        resId: 1,
+        arch: `
+            <form>
+                <field name="document"/>
+            </form>`,
+    });
+    expect(".o_field_binary input").toHaveValue("");
 });
